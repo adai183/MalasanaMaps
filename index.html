@@ -35,7 +35,7 @@
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                     <a href="#">
-                        Start Bootstrap
+                        Malasaña Maps
                     </a>
                 </li>
                 <li>
@@ -63,16 +63,26 @@
         </div>
         <!-- /#sidebar-wrapper -->
 
-
-                <!-- Map -->
-                <div id="map-container" >
-                    <div id="map"></div>
-                </div>
+        <!-- /#page-content-wrapper-->
+        <div id="page-content-wrapper">
+            <!-- Map -->
+            <div id="map-container" >
+                <div id="map"></div>
+            </div>
+                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+        </div>    
             </div> 
         </div> 
 
         <!-- End content -->
 
+        <!-- Menu Toggle Script -->
+        <script>
+            $("#menu-toggle").click(function(e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+        });
+        </script>
         <!-- JS Imports -->
 
         <script src="js/vendor/knockout-3.2.0.js"></script>
