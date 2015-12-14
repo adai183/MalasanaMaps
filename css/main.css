@@ -17,10 +17,15 @@ html, body {
     height: 100%;
 }
 
-#navbar
+
+#menu-toggle
 {
-    
+	background: rgba(0,0,0,0.5);
+	position: absolute;
 }
+
+
+
 #wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
@@ -34,14 +39,16 @@ html, body {
 }
 
 #sidebar-wrapper {
-    z-index: 1000;
+	background: rgba(0,0,0,0.7);
+	position: absolute;
+    z-index: 1;
     position: fixed;
     left: 250px;
     width: 0;
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    background: #000;
+    
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
