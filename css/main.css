@@ -2,10 +2,12 @@
    display: block;
    height: 98vh;
    opacity: 1;
-   
 }
 .navbar.transparent.navbar-inverse .navbar-inner {
+   width: 100%;
+   position: absolute;
+   z-index: 0;		
    background: rgba(0,0,0,0.4);
-   height: 13vh;
+   height: 12vh;
    
 }
