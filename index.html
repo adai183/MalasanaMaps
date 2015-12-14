@@ -12,7 +12,8 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
         <link rel="stylesheet" href="css/normalize.min.css">
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+        <!-- unsure wether to use leaflet-->
+        <!--link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" /-->
         <link rel="stylesheet" href="css/main.css">
 
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
@@ -23,10 +24,15 @@
         <![endif]-->
      
         <div class="container">
-            <div class="row">
+            <div class="raw">
+                <div class="navbar transparent navbar-inverse navbar-fixed-top">
+                    <nav class="navbar-inner">
+                        ...
+                    </div>
+                </div>
                 <!-- Map -->
                 <div id="map" class="span12"></div>
-
+                <button id="drop" onclick="drop()">Drop Markers</button> 
             </div> 
         </div> 
 
@@ -38,7 +44,8 @@
         <script src="js/vendor/knockout-3.2.0.js"></script>
         
         <script src="https://maps.googleapis.com/maps/api/js"></script>
-        <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+        <!-- unsure wether to use leaflet-->
+        <!--script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script-->
         
         <!--script src="js/ui.js"></script>
         <script src="js/places.js"></script-->

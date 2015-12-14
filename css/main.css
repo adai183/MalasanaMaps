@@ -1,4 +1,11 @@
 #map{
    display: block;
    height: 98vh;
+   opacity: 1;
+   
+}
+.navbar.transparent.navbar-inverse .navbar-inner {
+   background: rgba(0,0,0,0.4);
+   height: 13vh;
+   
 }
