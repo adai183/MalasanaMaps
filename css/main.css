@@ -165,6 +165,7 @@ html, body {
   transform: rotate(-45deg);
 }
 
+/*
 @media(min-width:480px) {
     #wrapper {
         padding-left: 250px;
@@ -192,3 +193,4 @@ html, body {
         margin-right: 0;
     }
 }
+*/
