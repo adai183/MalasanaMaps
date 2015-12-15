@@ -20,12 +20,15 @@ html, body {
 
 #menu-toggle
 {
-	background: rgba(0,0,0,0.5);
 	position: absolute;
-	margin-top: 3px;
+	margin-left: 9px;
+	margin-top: 4px;
+	z-index: 10;
 }
 
-
+#menu-toggle.active {
+	margin-left: -30px;
+}
 
 #wrapper {
     padding-left: 0;
@@ -102,6 +105,7 @@ html, body {
 .sidebar-nav li a:active,
 .sidebar-nav li a:focus {
     text-decoration: none;
+    margin-left: 100;
 }
 
 .sidebar-nav > .sidebar-brand {
@@ -119,16 +123,24 @@ html, body {
     background: none;
 }
 
+/* Animated Hamburger Icon  */
 #menu-toggle { cursor: pointer; padding: 10px 35px 16px 0px; }
+
 #menu-toggle span, #menu-toggle span:before, #menu-toggle span:after {
   cursor: pointer;
   border-radius: 1px;
   height: 5px;
   width: 35px;
-  background: white;
+  background: black;
   position: absolute;
   display: block;
   content: '';
+}
+
+#menu-toggle.active span, #menu-toggle.active span:before, #menu-toggle.active span:after{
+	background: #A94442;
+	height: 5px;
+  	width: 25px;
 }
 #menu-toggle span:before {
   top: -10px; 
