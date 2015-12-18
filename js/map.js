@@ -39,7 +39,7 @@ var iniplaces = [
 var ViewModel = function() {
   var self = this;
   var markers = [];
-  var iterator = 0;
+  var infowindow;
   
   //Create a place object
   var Place = function(data){
@@ -60,36 +60,42 @@ var ViewModel = function() {
       animation: google.maps.Animation.DROP
     });
 
+    var contentString = '<div id="content">'+
+      '<div id="siteNotice">'+
+      '</div>'+
+      '<h4 id="firstHeading" class="firstHeading">'+
+      this.name +'</h4>'+
+      '<div id="bodyContent">'+
+      '<p>'+ this.description +'</p>'+
+      '</div>'+
+      '</div>';
+
+    var infowindow = new google.maps.InfoWindow({
+    content: contentString
+    });
+
+    function toggleBounce() {
+      if (marker.getAnimation() !== null) {
+        marker.setAnimation(null);
+      } else {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        // stop animation after certain time
+        setTimeout(function(){marker.setAnimation(null);}, 2100);
+      }
+    }
 
     google.maps.event.addListener(marker, 'click', function(){    
-      map.panTo(marker.position);
+      // Doesn't make sense to recenter the map, because all location are very close
+      //map.panTo(marker.position);
+      toggleBounce();
+      infowindow.open(map, marker);
     });
 
 
     markers.push(marker);
   };
 
-/*
-  self.drop = function() {
-      for (var i = 0; i < iniplaces.length; i++) {
-        setTimeout(function() {
-          addMarker();
-        }, i * 200);
-      }
-    };
-   
-  function addMarker() {
-    markers.push(new google.maps.Marker({
-      position: new google.maps.LatLng(iniplaces[iterator].lat, iniplaces[iterator].long),
-      map: map,
-      draggable: false,
-      icon:   'http://www.google.com/mapfiles/arrow.png',
-      shadow: 'http://www.google.com/mapfiles/arrowshadow.png',      
-      animation: google.maps.Animation.DROP
-    }));
-    iterator++;
-  }
-*/
+
   function initializeMap() {
     var malasana = new google.maps.LatLng(40.424430, -3.701449)
     var mapCanvas = document.getElementById('map');
