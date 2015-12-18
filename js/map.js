@@ -39,7 +39,8 @@ var iniplaces = [
 var ViewModel = function() {
   var self = this;
   var markers = [];
-  var infowindow;
+  var infowindows = [];
+
   
   //Create a place object
   var Place = function(data){
@@ -75,24 +76,28 @@ var ViewModel = function() {
     });
 
     function toggleBounce() {
-      if (marker.getAnimation() !== null) {
-        marker.setAnimation(null);
-      } else {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        // stop animation after certain time
-        setTimeout(function(){marker.setAnimation(null);}, 2100);
-      }
+        // stop all other markers from beeing animated
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setAnimation(null);
+        }
+        // animate marker
+        marker.setAnimation(google.maps.Animation.BOUNCE);    
     }
 
     google.maps.event.addListener(marker, 'click', function(){    
-      // Doesn't make sense to recenter the map, because all location are very close
-      //map.panTo(marker.position);
-      toggleBounce();
+      // close all other info windows to avoid multiple windows beeing open simultaniously
+      for (var i = 0; i < infowindows.length; i++) {
+        infowindows[i].close();
+      }
+      // open selected infowindow
       infowindow.open(map, marker);
+      // animate selected marker
+      toggleBounce();
     });
 
 
     markers.push(marker);
+    infowindows.push(infowindow);
   };
 
 
