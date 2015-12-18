@@ -145,12 +145,7 @@ var ViewModel = function() {
     }
   };
 
-/*
-  $(document).ready(function(){
-    // Use setTimeout to make sure map has finished rendering when markers drop
-    setTimeout(self.drop, 1500);
-});
-*/
+
 };
 
 
