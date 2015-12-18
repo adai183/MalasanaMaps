@@ -1,22 +1,57 @@
 /**
  * Model for neighborhood places
  */
-var places = [
-  new google.maps.LatLng(40.427149, -3.703609),
-  new google.maps.LatLng(40.426806, -3.708587),
-  new google.maps.LatLng(40.424254, -3.706639),
-  new google.maps.LatLng(40.423515, -3.702312),
-  new google.maps.LatLng(40.426088, -3.709495)
+var iniplaces = [
+  {
+    name: "Cuervo Store",
+    lat: 40.426808,
+    long: -3.703256,
+    description: "cool clothes and music. If you like garage Rock like Burger records"
+  },
+  {
+    name: "La Catrina - Mezcalería",
+    lat: 40.425271,
+    long: -3.702007,
+    description: "Mezcal, good Mexican food in a colorful cantina full of Mexican folklore. The owner has good taste in music."
+  },
+  {
+    name: "Federal Café",
+    lat: 40.427005,
+    long: -3.709271,
+    description: "Good open workplace with creative breakfasts and Scandinavian design furniture"
+  },
+  {
+    name: "Mongo Scifi & Exotic Bar",
+    lat: 40.425136, 
+    long: -3.704312,
+    description: "Great place to party"
+  },
+  {
+    name: "Café Pepe Botella",
+    lat: 40.426588, 
+    long: -3.703641,
+    description: "Good coffe and jazz music"
+  },
 ];
- 
+
+
 
 var ViewModel = function() {
   var self = this;
   var markers = [];
   var iterator = 0;
   
+  //Create a place object
+  var Place = function(data){
+    this.name = data.name;
+    this.lat = data.lat;
+    this.long = data.long;
+    this.description = data.description;
+  };
+
+
   self.drop = function() {
-      for (var i = 0; i < places.length; i++) {
+      for (var i = 0; i < iniplaces.length; i++) {
         setTimeout(function() {
           addMarker();
         }, i * 200);
@@ -25,7 +60,7 @@ var ViewModel = function() {
    
   function addMarker() {
     markers.push(new google.maps.Marker({
-      position: places[iterator],
+      position: new google.maps.LatLng(iniplaces[iterator].lat, iniplaces[iterator].long),
       map: map,
       draggable: false,
       icon:   'http://www.google.com/mapfiles/arrow.png',
@@ -34,15 +69,6 @@ var ViewModel = function() {
     }));
     iterator++;
   }
-
-  $(document).ready(function(){
-    self.drop();
-  });
-};
-
-/**
- * Initialize google MAP
- */
 
   function initializeMap() {
     var malasana = new google.maps.LatLng(40.424430, -3.701449)
@@ -69,13 +95,21 @@ var ViewModel = function() {
  
     map = new google.maps.Map(mapCanvas, mapOptions);
   }
+  initializeMap();
 
+  //Push the Trails into a list of viewmodel trail objects
+  self.placeList = ko.observableArray([]);
 
+  iniplaces.forEach(function(placeitem){
+    self.placeList.push(new Place(placeitem));
+  });
 
-// declares a global map variable
-var map;
+  $(document).ready(function(){
+    self.drop();
+});
+};
+
 
 $(document).ready(function(){
-    initializeMap();
     ko.applyBindings(new ViewModel());
 });
