@@ -47,9 +47,29 @@ var ViewModel = function() {
     this.lat = data.lat;
     this.long = data.long;
     this.description = data.description;
+
+    name_string = String(data.name);
+
+    var marker = new google.maps.Marker({
+      position: new google.maps.LatLng(data.lat, data.long),
+      title: name_string,
+      map: map,
+      draggable: false,
+      icon:   'http://www.google.com/mapfiles/arrow.png',
+      shadow: 'http://www.google.com/mapfiles/arrowshadow.png',      
+      animation: google.maps.Animation.DROP
+    });
+
+
+    google.maps.event.addListener(marker, 'click', function(){    
+      map.panTo(marker.position);
+    });
+
+
+    markers.push(marker);
   };
 
-
+/*
   self.drop = function() {
       for (var i = 0; i < iniplaces.length; i++) {
         setTimeout(function() {
@@ -69,7 +89,7 @@ var ViewModel = function() {
     }));
     iterator++;
   }
-
+*/
   function initializeMap() {
     var malasana = new google.maps.LatLng(40.424430, -3.701449)
     var mapCanvas = document.getElementById('map');
@@ -104,9 +124,22 @@ var ViewModel = function() {
     self.placeList.push(new Place(placeitem));
   });
 
+  //Create a binding to listen to the click on the list
+  self.clickMarker = function(place){
+    var placeName = place.name;
+    for (var i in markers){
+      if (markers[i].title === placeName) {
+        google.maps.event.trigger(markers[i], 'click');
+      }
+    }
+  };
+
+/*
   $(document).ready(function(){
-    self.drop();
+    // Use setTimeout to make sure map has finished rendering when markers drop
+    setTimeout(self.drop, 1500);
 });
+*/
 };
 
 

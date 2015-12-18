@@ -37,7 +37,7 @@
                 <!--Elements-->   
                 <ul class="sidebar-nav" data-bind="foreach: placeList">
                     <li>
-                        <a href="#" data-bind="text: name" >Best music places</a>
+                        <a href="#" data-bind="text: name, click: $root.clickMarker" ></a>
                     </li>
                 </ul>
             </div>
