@@ -35,9 +35,9 @@ var iniplaces = [
 ];
 
 
-
 var ViewModel = function() {
   var self = this;
+  var map;
   var markers = [];
   var infowindows = [];
 
@@ -50,16 +50,17 @@ var ViewModel = function() {
     this.description = data.description;
 
     name_string = String(data.name);
-
-    var marker = new google.maps.Marker({
-      position: new google.maps.LatLng(data.lat, data.long),
-      title: name_string,
-      map: map,
-      draggable: false,
-      icon:   'http://www.google.com/mapfiles/arrow.png',
-      shadow: 'http://www.google.com/mapfiles/arrowshadow.png',      
-      animation: google.maps.Animation.DROP
-    });
+    if (typeof google != "undefined"){
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(data.lat, data.long),
+        title: name_string,
+        map: map,
+        draggable: false,
+        icon:   'http://www.google.com/mapfiles/arrow.png',
+        shadow: 'http://www.google.com/mapfiles/arrowshadow.png',      
+        animation: google.maps.Animation.DROP
+      });
+    }
 
     var contentString = '<div id="content">'+
       '<div id="siteNotice">'+
@@ -70,10 +71,12 @@ var ViewModel = function() {
       '<p>'+ this.description +'</p>'+
       '</div>'+
       '</div>';
-
-    var infowindow = new google.maps.InfoWindow({
-    content: contentString
-    });
+    
+    if (typeof google != "undefined"){
+      var infowindow = new google.maps.InfoWindow({
+      content: contentString
+      });
+    }
 
     function toggleBounce() {
         // stop all other markers from beeing animated
@@ -102,7 +105,17 @@ var ViewModel = function() {
 
 
   function initializeMap() {
-    var malasana = new google.maps.LatLng(40.424430, -3.701449)
+    var malasana;
+    
+    try {
+        // This next line makes `malasana` a new Google Map JavaScript Object
+        malasana = new google.maps.LatLng(40.424430, -3.701449);
+      } catch (err) {
+        //if google map api didnt respond
+        $('#map').hide();
+        $('#map-error').html('<h5>There is problem to retrieve data from google map</br>Please try again later</h5>');
+      }
+    
     var mapCanvas = document.getElementById('map');
     var mapOptions = {
       zoom: 15,
@@ -111,37 +124,31 @@ var ViewModel = function() {
       mapTypeControlOptions: {
         style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
         position: google.maps.ControlPosition.TOP_RIGHT
-    },
-    zoomControl: true,
-    zoomControlOptions: {
-        position: google.maps.ControlPosition.RIGHT_CENTER
-    },
-    scaleControl: true,
-    streetViewControl: true,
-    streetViewControlOptions: {
-        position: google.maps.ControlPosition.RIGHT_BOTTOM
-    },
-      styles: [{"elementType":"geometry","stylers":[{"hue":"#ff4400"},{"saturation":-68},{"lightness":-4},{"gamma":0.72}]},{"featureType":"road","elementType":"labels.icon"},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"hue":"#0077ff"},{"gamma":3.1}]},{"featureType":"water","stylers":[{"hue":"#00ccff"},{"gamma":0.44},{"saturation":-33}]},{"featureType":"poi.park","stylers":[{"hue":"#44ff00"},{"saturation":-23}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"hue":"#007fff"},{"gamma":0.77},{"saturation":65},{"lightness":99}]},{"featureType":"water","elementType":"labels.text.stroke","stylers":[{"gamma":0.11},{"weight":5.6},{"saturation":99},{"hue":"#0091ff"},{"lightness":-86}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"lightness":-48},{"hue":"#ff5e00"},{"gamma":1.2},{"saturation":-23}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"saturation":-64},{"hue":"#ff9100"},{"lightness":16},{"gamma":0.47},{"weight":2.7}]}]
-    };
-    try {
-      // This next line makes `map` a new Google Map JavaScript Object and attaches it to the DOM
+      },
+      zoomControl: true,
+      zoomControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER
+      },
+      scaleControl: true,
+      streetViewControl: true,
+      streetViewControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_BOTTOM
+      },
+        styles: [{"elementType":"geometry","stylers":[{"hue":"#ff4400"},{"saturation":-68},{"lightness":-4},{"gamma":0.72}]},{"featureType":"road","elementType":"labels.icon"},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"hue":"#0077ff"},{"gamma":3.1}]},{"featureType":"water","stylers":[{"hue":"#00ccff"},{"gamma":0.44},{"saturation":-33}]},{"featureType":"poi.park","stylers":[{"hue":"#44ff00"},{"saturation":-23}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"hue":"#007fff"},{"gamma":0.77},{"saturation":65},{"lightness":99}]},{"featureType":"water","elementType":"labels.text.stroke","stylers":[{"gamma":0.11},{"weight":5.6},{"saturation":99},{"hue":"#0091ff"},{"lightness":-86}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"lightness":-48},{"hue":"#ff5e00"},{"gamma":1.2},{"saturation":-23}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"saturation":-64},{"hue":"#ff9100"},{"lightness":16},{"gamma":0.47},{"weight":2.7}]}]
+      };
+    if (typeof google != "undefined"){
       map = new google.maps.Map(mapCanvas, mapOptions);
-      $('#map').height($(window).height());
-    } catch (err) {
-      //if google map api didnt respond
-      $('#map').hide();
-      $('#map-error').html('<h5>There is problem to retrieve data from google map</br>Please try again later</h5>');
-
     }
   }
   initializeMap();
 
   //Push the Trails into a list of viewmodel trail objects
   self.placeList = ko.observableArray([]);
-
-  iniplaces.forEach(function(placeitem){
-    self.placeList.push(new Place(placeitem));
-  });
+  if (typeof google != "undefined"){
+    iniplaces.forEach(function(placeitem){
+      self.placeList.push(new Place(placeitem));
+    });
+  }
 
   //Create a binding to listen to the click on the list
   self.clickMarker = function(place){
