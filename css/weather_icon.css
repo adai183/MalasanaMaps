@@ -8,7 +8,7 @@
 	width: 20px; 
 	margin-left: -15px;
 	position: absolute;
-	left: 90px;  
+	left: 85%;  
 	top: 20px;
 }
 .sunny:before {
@@ -25,7 +25,7 @@
 	        transform: rotate(90deg);
 }
 .sunny:after {
-	background: #FFEE44; 
+	background: #ffd700; 
 	border-radius: 50%; 
 	box-shadow: rgba(255,255,0,0.2) 0 0 0 15px;
 	content: '';  
