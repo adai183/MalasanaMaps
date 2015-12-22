@@ -33,13 +33,14 @@ var iniplaces = [
     description: "Good coffe and jazz music"
   },
 ];
-
+var weather;
 
 var ViewModel = function() {
   var self = this;
   var map;
   var markers = [];
   var infowindows = [];
+  var weather;
 
   
   //Create a place object
@@ -188,8 +189,12 @@ var ViewModel = function() {
     var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
     $.getJSON(url, function(data){
       console.log(data);
+      console.log(data.weather[0].description);
+      weather = data.weather[0].description;
       }); 
+
   };
+
   openweatherCall();
   flickrCall();
   facebookCall();
