@@ -177,7 +177,13 @@ var ViewModel = function() {
 
           console.log('sent');         
     };
+
+    var facebookCall = function () {
+     
+    };
+
   flickrCall();
+  facebookCall();
 
 };
 
