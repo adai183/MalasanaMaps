@@ -129,6 +129,11 @@ html, body {
     background: none;
 }
 
+/* Weather */
+.weather {
+    z-index: 10;
+}
+
 /* Animated Hamburger Icon  */
 #menu-toggle { cursor: pointer; padding: 10px 35px 16px 0px; }
 

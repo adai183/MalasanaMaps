@@ -16,6 +16,7 @@
         
         
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" type="text/css" href="css/weather_icon.css">
         <script src="js/vendor/jquery-1.11.2.min.js"></script>
         <script src="js/vendor/bootstrap.min.js"></script>
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
@@ -55,9 +56,12 @@
                     </div>
                  </form> 
                 <!--Elements-->   
-                <ul class="sidebar-nav" data-bind="foreach: placeList">
-                    <li>
+                <ul class="sidebar-nav">
+                    <li data-bind="foreach: placeList">
                         <a href="#" data-bind="text: name, click: $root.clickMarker" ></a>
+                    </li>
+                    <li id="weather-info">
+                        <h3>Current Weather</h3>   
                     </li>
                 </ul>
             </div>
@@ -66,6 +70,7 @@
 
             <!-- Map -->
             <div id="map-container" >
+            <div  class="weather stormy"></div>
                 <div id="map"></div>
                 <div id="map-error" class="text-center"></div>
             </div>      

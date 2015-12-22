@@ -182,8 +182,17 @@ var ViewModel = function() {
      
     };
 
+  var openweatherCall = function(){
+    //Open weather Map ajax requesth
+    var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+    $.getJSON(url, function(data){
+      console.log(data);
+      }); 
+  };
+  openweatherCall();
   flickrCall();
   facebookCall();
+
 
 };
 
