@@ -160,6 +160,24 @@ var ViewModel = function() {
     }
   };
 
+  // API calls
+  var flickrCall = function(){
+    var url = "https://api.flickr.com/services/rest/?&method=flickr.people.getPublicPhotos&api_key=97d1c372b413a02c10ef47541ba743a8&user_id=137064132@N04&format=json&jsoncallback=?"; 
+
+    $.getJSON(url
+        ).success(
+          function(data) {
+            console.log('yessss');
+
+            console.log(data);
+          }).fail(
+              function(e) {
+              console.log('nooooo...%o', e);
+          });
+
+          console.log('sent');         
+    };
+  flickrCall();
 
 };
 
