@@ -33,15 +33,15 @@ var iniplaces = [
     description: "Good coffe and jazz music"
   },
 ];
-var weather;
+
 
 var ViewModel = function() {
   var self = this;
   var map;
   var markers = [];
   var infowindows = [];
-  var weather;
-
+  var weather = "sky is clear";
+  
   
   //Create a place object
   var Place = function(data){
@@ -103,7 +103,7 @@ var ViewModel = function() {
     infowindows.push(infowindow);
   };
 
-
+/*
   function initializeMap() {
     var malasana;
     
@@ -184,22 +184,63 @@ var ViewModel = function() {
      
     };
 
-  var openweatherCall = function(){
-    //Open weather Map ajax requesth
+// call openweather api and set weather animation on map canvas
+  var setWeather = function(){
     var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+    // call openweather api
     $.getJSON(url, function(data){
       console.log(data);
       console.log(data.weather[0].description);
       weather = data.weather[0].description;
       }); 
 
+    // set weather animation on map canvas
+    
   };
 
-  openweatherCall();
+  setWeather();
   flickrCall();
   facebookCall();
-
-
+*/
+  var test = function(){
+    if (weather === "sky is clear"){
+      $(".sunny").show();
+      console.log("sunny");
+    }
+    else if (weather === "few clouds"){
+      $(".sunny").show();
+      $(".cloudy").show();
+    }
+    else if (weather === "scattered clouds"){
+      $(".cloudy").show();
+    }
+    else if (weather === "broken clouds"){
+      $(".cloudy").show();
+    }
+    else if (weather === "shower rain"){
+      $(".cloudy").show();
+      $(".rainy").show();
+    }
+    else if (weather === "Rain"){
+      $(".cloudy").show();
+      $(".rainy").show();
+    }
+    else if (weather === "Thunderstorm"){
+      $(".cloudy").show();
+      $(".rainy").show();
+    }
+    else if (weather === "snow"){
+      $(".cloudy").show();
+      $(".snowy").show();
+    }
+    else if (weather === "mist"){
+      $(".cloudy").show();
+    }
+  };
+  test();
+  self.hideWeather = function(){
+    $(".weather").hide();
+  };
 };
 
 

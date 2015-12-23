@@ -8,8 +8,8 @@
 	width: 20px; 
 	margin-left: -15px;
 	position: absolute;
-	left: 85%;  
-	top: 20px;
+	left: 63%;  
+	top: 20%;
 }
 .sunny:before {
 	background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
@@ -60,9 +60,12 @@
 	width: 50px; 
 	margin-left: -60px;
 	position: absolute;
-	left: 255px;
-	top: 70px; 
+	left: 64%;
+	top: 32%; 
 }
+
+
+
 .cloudy:after {
 	-webkit-animation: cloudy_shadow 5s ease-in-out infinite;
 	        animation: cloudy_shadow 5s ease-in-out infinite;

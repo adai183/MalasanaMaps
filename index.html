@@ -28,23 +28,7 @@
         <![endif]--> 
 
         <!--  Load and initialize the Facebook SDK -->
-        <script>
-          window.fbAsyncInit = function() {
-            FB.init({
-              appId      : '1666730860282633',
-              xfbml      : true,
-              version    : 'v2.5'
-            });
-          };
-
-          (function(d, s, id){
-             var js, fjs = d.getElementsByTagName(s)[0];
-             if (d.getElementById(id)) {return;}
-             js = d.createElement(s); js.id = id;
-             js.src = "//connect.facebook.net/en_US/sdk.js";
-             fjs.parentNode.insertBefore(js, fjs);
-           }(document, 'script', 'facebook-jssdk'));
-        </script>
+       <script src="js/vendor/facebook.api.js"></script>
             
         <div id="wrapper">
              <!-- Sidebar -->   
@@ -63,6 +47,9 @@
                     <li id="weather-info">
                         <h3>Current Weather</h3>   
                     </li>
+                    <li>
+                        <a href="#" data-bind="click: $root.hideWeather"> Hide Weather</a>
+                    </li>
                 </ul>
             </div>
             <!-- /#sidebar-wrapper -->
@@ -70,78 +57,15 @@
 
             <!-- Map -->
             <div id="map-container" >
-                <div class="sunny weather"></div> 
-                <div class="cloudy weather"></div>
-                <div class="rainy weather"></div>
-                <div class="snowy weather"></div>
-                <div class="rainbow weather"></div>
-                <div class="starry weather"></div>
-                <div class="stormy weather"></div>
-
-                <div class="sun">
-            <div class="sun-face">
-                <div class="sun-hlight"></div>
-                <div class="sun-leye"></div>
-                <div class="sun-reye"></div>
-                <div class="sun-lred"></div>
-                <div class="sun-rred"></div>
-                <div class="sun-nose"></div>
-            </div>
-            <div class="sun-anime">
-            <div class="sun-ball"></div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-            <div class="sun-light">
-                <b></b>
-                <s></s>
-            </div>
-        </div>
-    </div>
+                <div class="sunny weather" style="display: none;"></div> 
+                <div class="cloudy weather" style="display: none;"></div>
+                <div class="rainy weather" style="display: none;"></div>
+                <div class="snowy weather" style="display: none;"></div>
+                <div class="rainbow weather" style="display: none;"></div>
+                <div class="starry weather" style="display: none;"></div>
+                <div class="stormy weather" style="display: none;"></div>
     
-
-                
+            
                 <div id="map"></div>
                 <div id="map-error" class="text-center"></div>
             </div>      
