@@ -49,7 +49,7 @@ var ViewModel = function() {
     this.lat = data.lat;
     this.long = data.long;
     this.description = data.description;
-
+    
     name_string = String(data.name);
     if (typeof google != "undefined"){
       var marker = new google.maps.Marker({
@@ -150,6 +150,7 @@ var ViewModel = function() {
     iniplaces.forEach(function(placeitem){
       self.placeList.push(new Place(placeitem));
     });
+    
   }
 
   //Create a binding to listen to the click on the list
@@ -190,44 +191,44 @@ var ViewModel = function() {
     var weather;
     // call openweather api
     $.getJSON(url, function(data){
-      console.log(data);
-      console.log(data.weather[0].description);
-      weather = data.weather[0].description;
-      }); 
+        console.log(data);
+        console.log(data.weather[0].description);
+        weather = data.weather[0].description;
 
-    // set weather animation on map canvas
-    if (weather = "Sky is Clear"){
-      $(".sunny").show();
-    }
-    else if (weather = "few clouds"){
-      $(".sunny").show();
-      $(".cloudy").show();
-    }
-    else if (weather = "Scattered Clouds"){
-      $(".cloudy").show();
-    }
-    else if (weather = "broken clouds"){
-      $(".cloudy").show();
-    }
-    else if (weather = "shower rain"){
-      $(".cloudy").show();
-      $(".rainy").show();
-    }
-    else if (weather = "rain"){
-      $(".cloudy").show();
-      $(".rainy").show();
-    }
-    else if (weather = "Thunderstorm"){
-      $(".cloudy").show();
-      $(".rainy").show();
-    }
-    else if (weather = "snow"){
-      $(".cloudy").show();
-      $(".snowy").show();
-    }
-    else if (weather = "mist"){
-      $(".cloudy").show();
-    }
+        // set weather animation on map canvas
+        if (weather = "Sky is Clear"){
+          $(".sunny").show();
+        }
+        else if (weather = "few clouds"){
+          $(".sunny").show();
+          $(".cloudy").show();
+        }
+        else if (weather = "Scattered Clouds"){
+          $(".cloudy").show();
+        }
+        else if (weather = "broken clouds"){
+          $(".cloudy").show();
+        }
+        else if (weather = "shower rain"){
+          $(".cloudy").show();
+          $(".rainy").show();
+        }
+        else if (weather = "rain"){
+          $(".cloudy").show();
+          $(".rainy").show();
+        }
+        else if (weather = "Thunderstorm"){
+          $(".cloudy").show();
+          $(".rainy").show();
+        }
+        else if (weather = "snow"){
+          $(".cloudy").show();
+          $(".snowy").show();
+        }
+        else if (weather = "mist"){
+          $(".cloudy").show();
+        }
+      }); 
   };
 
   setWeather();
@@ -238,6 +239,24 @@ var ViewModel = function() {
   self.hideWeather = function(){
     $(".weather").hide();
   };
+
+  // Search Function
+
+  self.query = ko.observable('');
+
+  self.search = function(value) {
+    self.placeList.removeAll();
+
+    if (value === '') return;
+
+    for (var place in placeList) {
+      if (placeList[place].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+        self.placeList.push(placeList[place]);
+      }
+    }
+  };
+  //self.query.subscribe(self.search);
+  
 };
 
 
