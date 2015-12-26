@@ -238,6 +238,24 @@ var ViewModel = function() {
   self.hideWeather = function(){
     $(".weather").hide();
   };
+
+  // Search Function
+
+  self.query = ko.observable('');
+
+  self.search = function(value) {
+    self.placeList.removeAll();
+
+    if (value === '') return;
+
+    for (var place in placeList) {
+      if (placeList[place].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+        self.placeList.push(placeList[place]);
+      }
+    }
+  };
+  self.query.subscribe(self.search);
+  
 };
 
 

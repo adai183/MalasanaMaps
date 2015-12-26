@@ -34,13 +34,13 @@
              <!-- Sidebar -->   
             <div id="sidebar-wrapper">
              <!-- Searchbar -->     
-                <form id="search-bar" class="navbar-form navbar-center" role="search">
+                <form id="search-bar" class="navbar-form navbar-center" role="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search">
                     </div>
                  </form> 
                 <!--Elements-->   
-                <ul class="sidebar-nav">
+                <ul class="sidebar-nav"  data-bind="visible: placeList.length > 0">
                     <li data-bind="foreach: placeList">
                         <a href="#" data-bind="text: name, click: $root.clickMarker" ></a>
                     </li>
