@@ -34,6 +34,8 @@ var iniplaces = [
   },
 ];
 var weather;
+var locationURLList = [];
+var imageObjList = [];
 
 var ViewModel = function() {
   var self = this;
@@ -230,6 +232,27 @@ var ViewModel = function() {
     }
   };
 
+  var instagramCall = function(){
+    // find location ID within 700 meters of the neighborhood's coordinates
+    var igLat = 40.426394;
+    var igLng = -3.704878;
+
+    $.ajax({
+      type: 'GET',
+      dataType: 'jsonp',
+      data: true,
+      url: 'https://api.instagram.com/v1/locations/search?lat='+ igLat.toString() + '&lng=' + igLng.toString() + '&distance=700&access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
+      }).done(function(data) {
+        console.log(data);
+        for (var i = 0; i < data.data.length; i++) {
+          console.log(data.data[i]);
+          var targetURL ='https://api.instagram.com/v1/locations/'+data.data[i].id+'/media/recent?access_token=1137819202.4400571.ddb143985bbe4037a23664722dcd79a4';
+          locationURLList.push(targetURL);
+        }
+        
+    });
+  };
+  instagramCall();
   setWeather();
   flickrCall();
   facebookCall();
@@ -241,20 +264,7 @@ var ViewModel = function() {
 
   // Search Function
 
-  self.query = ko.observable('');
-
-  self.search = function(value) {
-    self.placeList.removeAll();
-
-    if (value === '') return;
-
-    for (var place in placeList) {
-      if (placeList[place].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-        self.placeList.push(placeList[place]);
-      }
-    }
-  };
-  self.query.subscribe(self.search);
+  
   
 };
 

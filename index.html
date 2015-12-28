@@ -36,11 +36,11 @@
              <!-- Searchbar -->     
                 <form id="search-bar" class="navbar-form navbar-center" role="search">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
+                        <input type="text" class="form-control" placeholder="Search">
                     </div>
                  </form> 
                 <!--Elements-->   
-                <ul class="sidebar-nav"  data-bind="visible: placeList.length > 0">
+                <ul class="sidebar-nav">
                     <li data-bind="foreach: placeList">
                         <a href="#" data-bind="text: name, click: $root.clickMarker" ></a>
                     </li>
