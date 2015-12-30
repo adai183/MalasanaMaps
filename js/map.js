@@ -4,32 +4,32 @@
 var iniplaces = [
   {
     name: "Cuervo Store",
-    lat: 40.426808,
-    long: -3.703256,
+    latitude: 40.426808,
+    longitude: -3.703256,
     description: "cool clothes and music. If you like garage Rock like Burger records"
   },
   {
     name: "La Catrina - Mezcalería",
-    lat: 40.425271,
-    long: -3.702007,
+    latitude: 40.425271,
+    longitude: -3.702007,
     description: "Mezcal, good Mexican food in a colorful cantina full of Mexican folklore. The owner has good taste in music."
   },
   {
     name: "Federal Café",
-    lat: 40.427005,
-    long: -3.709271,
+    latitude: 40.427005,
+    longitude: -3.709271,
     description: "Good open workplace with creative breakfasts and Scandinavian design furniture"
   },
   {
     name: "Mongo Scifi & Exotic Bar",
-    lat: 40.425136, 
-    long: -3.704312,
+    latitude: 40.425136, 
+    longitude: -3.704312,
     description: "Great place to party"
   },
   {
     name: "Café Pepe Botella",
-    lat: 40.426588, 
-    long: -3.703641,
+    latitude: 40.426588, 
+    longitude: -3.703641,
     description: "Good coffe and jazz music"
   },
 ];
@@ -49,14 +49,15 @@ var ViewModel = function() {
   //Create a place object
   var Place = function(data){
     this.name = data.name;
-    this.lat = data.lat;
-    this.long = data.long;
+    this.lat = data.latitude;
+    this.long = data.longitude;
     this.description = data.description;
 
     name_string = String(data.name);
+    // create marker
     if (typeof google != "undefined"){
       this.marker = new google.maps.Marker({
-        position: new google.maps.LatLng(data.lat, data.long),
+        position: new google.maps.LatLng(data.latitude, data.longitude),
         title: name_string,
         map: map,
         draggable: false,
@@ -173,7 +174,7 @@ var ViewModel = function() {
           function(data) {
             console.log('yessss');
 
-            console.log(data);
+            console.log("flickr", data);
           }).fail(
               function(e) {
               console.log('nooooo...%o', e);
@@ -192,7 +193,7 @@ var ViewModel = function() {
     var weather;
     // call openweather api
     $.getJSON(url, function(data){
-        console.log(data);
+        console.log("openweather ", data);
         weather = data.weather[0].description;
         console.log(weather);
         // set weather animation on map
@@ -245,15 +246,16 @@ var ViewModel = function() {
       type: 'GET',
       dataType: 'jsonp',
       data: true,
-      url: 'https://api.instagram.com/v1/locations/search?lat='+ igLat.toString() + '&lng=' + igLng.toString() + '&distance=700&access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
+      url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
       }).done(function(data) {
-        console.log(data);
-        for (var i = 0; i < data.data.length; i++) {
-          //console.log(data.data[i]);
-          var targetURL ='https://api.instagram.com/v1/locations/'+data.data[i].id+'/media/recent?access_token=1137819202.4400571.ddb143985bbe4037a23664722dcd79a4';
-          locationURLList.push(targetURL);
+        console.log("instagram ",data);
+        for (var i = 0; i < data.data.length; i++){
+          console.log(data.data[i]);
+          
+          
+
+
         }
-        
     });
   };
   instagramCall();
