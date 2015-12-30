@@ -150,9 +150,9 @@ function initMap() {
       '<div id="siteNotice">'+
       '</div>'+
       '<h4 id="firstHeading" class="firstHeading">'+
-      this.name +'</h4>'+
+      place.name +'</h4>'+
       '<div id="bodyContent">'+
-      '<p>'+ this.description +'</p>'+
+      '<p>'+ place.description +'</p>'+
       '</div>'+
       '</div>';
         this.infowindow.setContent(html);
