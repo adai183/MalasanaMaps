@@ -33,21 +33,16 @@ var iniplaces = [
     description: "Good coffe and jazz music"
   },
 ];
-
-
+var weather;
+var locationURLList = [];
+var imageObjList = [];
 
 var ViewModel = function() {
   var self = this;
   var map;
-  var weather;
-  var locationURLList = [];
-  var imageObjList = [];
   var markers = [];
-  self.infowindows = ko.observableArray([]);
+  var infowindows = [];
   self.search = ko.observable('');
-  self.placeList = ko.observableArray([]);
-
-
   
   
   //Create a place object
@@ -57,9 +52,7 @@ var ViewModel = function() {
     this.long = data.long;
     this.description = data.description;
 
-    
-    // Create markers
-    var name_string = String(data.name);
+    name_string = String(data.name);
     if (typeof google != "undefined"){
       this.marker = new google.maps.Marker({
         position: new google.maps.LatLng(data.lat, data.long),
@@ -69,7 +62,6 @@ var ViewModel = function() {
         icon:   'img/marker.svg', 
         animation: google.maps.Animation.DROP
       });
-      markers.push(this.marker);
     }
 
     var contentString = '<div id="content">'+
@@ -82,12 +74,10 @@ var ViewModel = function() {
       '</div>'+
       '</div>';
     
-    // Create infowindows
     if (typeof google != "undefined"){
-       this.infowindow = new google.maps.InfoWindow({
+      var infowindow = new google.maps.InfoWindow({
       content: contentString
       });
-      self.infowindows.push(this.infowindow);
     }
 
     function toggleBounce() {
@@ -96,27 +86,24 @@ var ViewModel = function() {
           markers[i].setAnimation(null);
         }
         // animate marker
-        this.marker.setAnimation(google.maps.Animation.BOUNCE);    
+        marker.setAnimation(google.maps.Animation.BOUNCE);    
     }
 
     google.maps.event.addListener(this.marker, 'click', function(){    
       // close all other info windows to avoid multiple windows beeing open simultaniously
-      for (var i = 0; i < self.infowindows.length; i++) {
-        self.infowindows[i].close();
+      for (var i = 0; i < infowindows.length; i++) {
+        infowindows[i].close();
       }
       // open selected infowindow
-      this.infowindow.open(map, this.marker);
+      infowindow.open(map, marker);
       // animate selected marker
       toggleBounce();
     });
-  };
 
-  //Push the Trails into a list of viewmodel trail objects
-    if (typeof google != "undefined"){
-      iniplaces.forEach(function(placeitem){
-        self.placeList.push(new Place(placeitem));
-      });
-    }
+
+    markers.push(this.marker);
+    infowindows.push(infowindow);
+  };
 
 
   function initializeMap() {
@@ -159,7 +146,13 @@ var ViewModel = function() {
   }
   initializeMap();
 
-  
+  //Push the Trails into a list of viewmodel trail objects
+  self.placeList = ko.observableArray([]);
+  if (typeof google != "undefined"){
+    iniplaces.forEach(function(placeitem){
+      self.placeList.push(new Place(placeitem));
+    });
+  }
 
   //Create a binding to listen to the click on the list
   self.clickMarker = function(place){
@@ -202,40 +195,41 @@ var ViewModel = function() {
       console.log(data);
       console.log(data.weather[0].description);
       weather = data.weather[0].description;
-      // set weather animation on map canvas
-      if (weather === "Sky is Clear"){
-        $(".sunny").show();
-      }
-      else if (weather === "few clouds"){
-        $(".sunny").show();
-        $(".cloudy").show();
-      }
-      else if (weather === "Scattered Clouds"){
-        $(".cloudy").show();
-      }
-      else if (weather === "broken clouds"){
-        $(".cloudy").show();
-      }
-      else if (weather === "shower rain"){
-        $(".cloudy").show();
-        $(".rainy").show();
-      }
-      else if (weather === "rain"){
-        $(".cloudy").show();
-        $(".rainy").show();
-      }
-      else if (weather === "Thunderstorm"){
-        $(".cloudy").show();
-        $(".rainy").show();
-      }
-      else if (weather === "snow"){
-        $(".cloudy").show();
-        $(".snowy").show();
-      }
-      else if (weather === "mist"){
-        $(".cloudy").show();
-      }
-    }); 
+      }); 
+
+    // set weather animation on map canvas
+    if (weather = "Sky is Clear"){
+      $(".sunny").show();
+    }
+    else if (weather = "few clouds"){
+      $(".sunny").show();
+      $(".cloudy").show();
+    }
+    else if (weather = "Scattered Clouds"){
+      $(".cloudy").show();
+    }
+    else if (weather = "broken clouds"){
+      $(".cloudy").show();
+    }
+    else if (weather = "shower rain"){
+      $(".cloudy").show();
+      $(".rainy").show();
+    }
+    else if (weather = "rain"){
+      $(".cloudy").show();
+      $(".rainy").show();
+    }
+    else if (weather = "Thunderstorm"){
+      $(".cloudy").show();
+      $(".rainy").show();
+    }
+    else if (weather = "snow"){
+      $(".cloudy").show();
+      $(".snowy").show();
+    }
+    else if (weather = "mist"){
+      $(".cloudy").show();
+    }
   };
 
   var instagramCall = function(){
@@ -249,8 +243,9 @@ var ViewModel = function() {
       data: true,
       url: 'https://api.instagram.com/v1/locations/search?lat='+ igLat.toString() + '&lng=' + igLng.toString() + '&distance=700&access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
       }).done(function(data) {
+        console.log(data);
         for (var i = 0; i < data.data.length; i++) {
-          //console.log(data.data[i]);
+          console.log(data.data[i]);
           var targetURL ='https://api.instagram.com/v1/locations/'+data.data[i].id+'/media/recent?access_token=1137819202.4400571.ddb143985bbe4037a23664722dcd79a4';
           locationURLList.push(targetURL);
         }
@@ -266,6 +261,7 @@ var ViewModel = function() {
   self.hideWeather = function(){
     $(".weather").hide();
   };
+
 
   // Search Function
 
@@ -294,6 +290,7 @@ var ViewModel = function() {
                     });
             }
         });
+
   
   
 };
