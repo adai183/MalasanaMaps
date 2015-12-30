@@ -33,16 +33,17 @@ var iniplaces = [
     description: "Good coffe and jazz music"
   },
 ];
-var weather;
-var locationURLList = [];
-var imageObjList = [];
+
 
 var ViewModel = function() {
   var self = this;
   var map;
   var markers = [];
   var infowindows = [];
+  var weather;
+  var locationURLList = [];
   self.search = ko.observable('');
+  self.placeList = ko.observableArray([]);
   
   
   //Create a place object
@@ -147,7 +148,6 @@ var ViewModel = function() {
   initializeMap();
 
   //Push the Trails into a list of viewmodel trail objects
-  self.placeList = ko.observableArray([]);
   if (typeof google != "undefined"){
     iniplaces.forEach(function(placeitem){
       self.placeList.push(new Place(placeitem));
@@ -192,45 +192,49 @@ var ViewModel = function() {
     var weather;
     // call openweather api
     $.getJSON(url, function(data){
-      console.log(data);
-      console.log(data.weather[0].description);
-      weather = data.weather[0].description;
+        console.log(data);
+        weather = data.weather[0].description;
+        console.log(weather);
+        // set weather animation on map
+        switch (weather) {
+          case "Sky is Clear":
+            $(".sunny").show();
+            break;
+          case "few clouds":
+            $(".sunny").show();
+            $(".cloudy").show();
+            break;
+          case "Scattered Clouds":
+            $(".sunny").show();
+            $(".cloudy").show();
+            break;
+          case "broken clouds":
+            $(".sunny").show();
+            $(".cloudy").show();
+            break;
+          case "overcast clouds":
+            $(".cloudy").show();
+            break;
+          case "rain":
+            $(".rainy").show();
+            $(".cloudy").show();
+            break;
+           case "Thunderstorm":
+            $(".rainy").show();
+            $(".cloudy").show();
+            break;
+           case "snow":
+            $(".snowy").show();
+            $(".cloudy").show();
+            break;
+           case "mist":
+            $(".cloudy").show();
+            break;
+          default:
+            console.log("Sorry, " + weather + "does not match any coded weather description.");
+        }
       }); 
-
-    // set weather animation on map canvas
-    if (weather = "Sky is Clear"){
-      $(".sunny").show();
-    }
-    else if (weather = "few clouds"){
-      $(".sunny").show();
-      $(".cloudy").show();
-    }
-    else if (weather = "Scattered Clouds"){
-      $(".cloudy").show();
-    }
-    else if (weather = "broken clouds"){
-      $(".cloudy").show();
-    }
-    else if (weather = "shower rain"){
-      $(".cloudy").show();
-      $(".rainy").show();
-    }
-    else if (weather = "rain"){
-      $(".cloudy").show();
-      $(".rainy").show();
-    }
-    else if (weather = "Thunderstorm"){
-      $(".cloudy").show();
-      $(".rainy").show();
-    }
-    else if (weather = "snow"){
-      $(".cloudy").show();
-      $(".snowy").show();
-    }
-    else if (weather = "mist"){
-      $(".cloudy").show();
-    }
-  };
+    };
 
   var instagramCall = function(){
     // find location ID within 700 meters of the neighborhood's coordinates
@@ -245,7 +249,7 @@ var ViewModel = function() {
       }).done(function(data) {
         console.log(data);
         for (var i = 0; i < data.data.length; i++) {
-          console.log(data.data[i]);
+          //console.log(data.data[i]);
           var targetURL ='https://api.instagram.com/v1/locations/'+data.data[i].id+'/media/recent?access_token=1137819202.4400571.ddb143985bbe4037a23664722dcd79a4';
           locationURLList.push(targetURL);
         }
@@ -283,11 +287,13 @@ var ViewModel = function() {
                         // does the place name contain the search term?
                         if (item.name.toLowerCase().indexOf(searchTerm) < 0) {
                             item.marker.setVisible(false); // hide the map marker
+                            
                         } else {
                             item.marker.setVisible(true); // show the map marker
                         }
                         return item.name.toLowerCase().indexOf(searchTerm) !== -1; // return filtered location list
                     });
+
             }
         });
 
