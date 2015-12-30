@@ -36,12 +36,12 @@
              <!-- Searchbar -->     
                 <form id="search-bar" class="navbar-form navbar-center" role="search">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search">
+                        <input type="text" class="form-control" data-bind="value: search, valueUpdate: 'afterkeydown'" placeholder="Search">
                     </div>
                  </form> 
                 <!--Elements-->   
                 <ul class="sidebar-nav">
-                    <li data-bind="foreach: placeList">
+                    <li data-bind="foreach: filteredItems">
                         <a href="#" data-bind="text: name, click: $root.clickMarker" ></a>
                     </li>
                     <li id="weather-info">
