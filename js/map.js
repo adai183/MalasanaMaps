@@ -42,7 +42,7 @@ var ViewModel = function() {
   var weather;
   var locationURLList = [];
   var imageObjList = [];
-  self.markers = ko.observableArray([]);
+  var markers = [];
   self.infowindows = ko.observableArray([]);
   self.search = ko.observable('');
   self.placeList = ko.observableArray([]);
@@ -69,7 +69,7 @@ var ViewModel = function() {
         icon:   'img/marker.svg', 
         animation: google.maps.Animation.DROP
       });
-      self.markers.push(this.marker);
+      markers.push(this.marker);
     }
 
     var contentString = '<div id="content">'+
@@ -92,8 +92,8 @@ var ViewModel = function() {
 
     function toggleBounce() {
         // stop all other markers from beeing animated
-        for (var i = 0; i < self.markers.length; i++) {
-          self.markers[i].setAnimation(null);
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setAnimation(null);
         }
         // animate marker
         this.marker.setAnimation(google.maps.Animation.BOUNCE);    
@@ -164,9 +164,9 @@ var ViewModel = function() {
   //Create a binding to listen to the click on the list
   self.clickMarker = function(place){
     var placeName = place.name;
-    for (var i in self.markers){
-      if (self.markers[i].title === placeName) {
-        google.maps.event.trigger(self.markers[i], 'click');
+    for (var i in markers){
+      if (markers[i].title === placeName) {
+        google.maps.event.trigger(markers[i], 'click');
       }
     }
   };
@@ -268,7 +268,7 @@ var ViewModel = function() {
   };
 
   // Search Function
-  
+
   self.filteredItems = ko.computed(function() {
             var searchTerm = self.search().toLowerCase();
             // is the search term undefined or empty?
