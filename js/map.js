@@ -41,7 +41,39 @@ var Place = function(data) {
     this.lng = data.lng;
     this.description = data.description;
 };
-function initMap() {
+
+
+// instagram api call
+var instagramCall = function(){ 
+            console.log(self); 
+            $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                data: true,
+                url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
+            }).success(function(data) {
+                console.log("instagram ",data);
+                for (var i = 0; i < data.data.length; i++){
+                    var location = data.data[i].location;
+                    console.log(location);
+                    var instlocation = {
+                        name:location.name ,
+                        lat: location.latitude,
+                        lng: location.longitude,
+                        description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''>"    
+                    };
+                place.push(instlocation);
+                }
+
+
+
+
+
+
+
+
+
+                function initMap() {
     var ViewModel = function() {
         var self = this;
         this.placeList = ko.observableArray([]);
@@ -49,30 +81,7 @@ function initMap() {
         this.search = ko.observable('');
         
 
-    // instagram api call
-    self.instagramCall = function(){ 
-        console.log(self); 
-        $.ajax({
-            type: 'GET',
-            dataType: 'jsonp',
-            data: true,
-            url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
-        }).success(function(data) {
-            console.log("instagram ",data);
-            for (var i = 0; i < data.data.length; i++){
-                var location = data.data[i].location;
-                console.log(location);
-                var instlocation = {
-                    name:location.name ,
-                    lat: location.latitude,
-                    lng: location.longitude,
-                    description: "<img src='"+data.data[i].images.thumbnail.url + "''>"    
-                };
-            self.placeList.push(new Place(instlocation));
-            }
-        });
-    }();    
-
+       
 
         // Create place object. Push to array.
         place.forEach(function(item) {
@@ -169,7 +178,7 @@ function initMap() {
         }
         // this.markers = [];
         this.infowindow = new google.maps.InfoWindow({
-            maxWidth: 250
+            maxWidth: 300
         });
         this.renderMarkers(self.placeList());
 
@@ -255,3 +264,19 @@ function initMap() {
    
     ko.applyBindings(new ViewModel());
 } initMap();
+
+
+
+
+
+
+
+
+            });
+        }();    
+
+
+
+
+
+
