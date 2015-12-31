@@ -31,9 +31,10 @@ var place = [
     name: "Café Pepe Botella",
     lat: 40.426588, 
     lng: -3.703641,
-    description: "Good coffe and jazz music"
+    description: "Good coffee and jazz music"
   },
 ];
+
 var Place = function(data) {
     this.name = data.name;
     this.lat = data.lat;
@@ -46,6 +47,33 @@ function initMap() {
         this.placeList = ko.observableArray([]);
         this.igImages = ko.observableArray([]);
         this.search = ko.observable('');
+        
+
+    // instagram api call
+    self.instagramCall = function(){ 
+        console.log(self); 
+        $.ajax({
+            type: 'GET',
+            dataType: 'jsonp',
+            data: true,
+            url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
+        }).success(function(data) {
+            console.log("instagram ",data);
+            for (var i = 0; i < data.data.length; i++){
+                var location = data.data[i].location;
+                console.log(location);
+                var instlocation = {
+                    name:location.name ,
+                    lat: location.latitude,
+                    lng: location.longitude,
+                    description: "<img src='"+data.data[i].images.thumbnail.url + "''>"    
+                };
+            self.placeList.push(new Place(instlocation));
+            }
+        });
+    }();    
+
+
         // Create place object. Push to array.
         place.forEach(function(item) {
             this.placeList.push(new Place(item));
@@ -120,6 +148,7 @@ function initMap() {
                         return item.name.toLowerCase().indexOf(searchTerm) !== -1; // return filtered location list
                     });
             }
+
         });
         // Google Maps
         var styleArray = [{"featureType":"landscape.fill","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#e0efef"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"hue":"#1900ff"},{"color":"#c0e8e8"}]},{"featureType":"road","elementType":"geometry","stylers":[{"lightness":100},{"visibility":"on"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"visibility":"on"},{"lightness":700}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#7dcdcd"}]}];
@@ -143,6 +172,68 @@ function initMap() {
             maxWidth: 250
         });
         this.renderMarkers(self.placeList());
+
+        // API calls
+
+        // call openweather api and set weather animation on map canvas
+        var setWeather = function(){
+            var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+            var weather;
+            // call openweather api
+            $.getJSON(url, function(data){
+                console.log("openweather ", data);
+                weather = data.weather[0].description;
+                console.log(weather);
+                // set weather animation on map
+                switch (weather) {
+                  case "Sky is Clear":
+                    $(".sunny").show();
+                    break;
+                  case "few clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "Scattered Clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "broken clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "overcast clouds":
+                    $(".cloudy").show();
+                    break;
+                  case "rain":
+                    $(".rainy").show();
+                    $(".cloudy").show();
+                    break;
+                   case "Thunderstorm":
+                    $(".rainy").show();
+                    $(".cloudy").show();
+                    $(".stormy").show();
+                    break;
+                   case "snow":
+                    $(".snowy").show();
+                    $(".cloudy").show();
+                    break;
+                   case "mist":
+                    $(".cloudy").show();
+                    break;
+                  default:
+                    console.log("Sorry, " + weather + "does not match any coded weather description.");
+                }
+              }); 
+            };
+
+
+            
+        setWeather();
+        
+        self.hideWeather = function(){
+            $(".weather").hide();
+        };
+
     };
     // infowindow content
     ViewModel.prototype.updateContent = function(place) {
@@ -157,7 +248,10 @@ function initMap() {
       '</div>';
         this.infowindow.setContent(html);
     };
-    // Instagram API
+
+ 
+       
+    
    
     ko.applyBindings(new ViewModel());
 } initMap();
