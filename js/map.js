@@ -43,7 +43,7 @@ var Place = function(data) {
 };
 
 
-// instagram api call
+// Call instagram api to load external data into place model
 var instagramCall = function(){ 
             console.log(self); 
             $.ajax({
@@ -53,6 +53,7 @@ var instagramCall = function(){
                 url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
             }).success(function(data) {
                 console.log("instagram ",data);
+                // add external data to place model
                 for (var i = 0; i < data.data.length; i++){
                     var location = data.data[i].location;
                     console.log(location);
@@ -64,16 +65,15 @@ var instagramCall = function(){
                     };
                 place.push(instlocation);
                 }
+                // initialize map after data has been added to place model
+                initMap();
+            });
+        }();    
 
 
 
 
-
-
-
-
-
-                function initMap() {
+var initMap = function() {
     var ViewModel = function() {
         var self = this;
         this.placeList = ko.observableArray([]);
@@ -263,20 +263,4 @@ var instagramCall = function(){
     
    
     ko.applyBindings(new ViewModel());
-} initMap();
-
-
-
-
-
-
-
-
-            });
-        }();    
-
-
-
-
-
-
+};
