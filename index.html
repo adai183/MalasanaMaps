@@ -42,10 +42,7 @@
                 <!--Elements-->   
                 <ul class="sidebar-nav">
                     <li data-bind="foreach: filteredItems">
-                        <a href="#" data-bind="text: name, click: $root.clickMarker" ></a>
-                    </li>
-                    <li id="weather-info">
-                        <h3>Current Weather</h3>   
+                        <a href="#" data-bind="text: $data.name, click: $parent.setPlace" ></a>
                     </li>
                     <li>
                         <a href="#" data-bind="click: $root.hideWeather"> Hide Weather</a>

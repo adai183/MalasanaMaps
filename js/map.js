@@ -1,277 +1,139 @@
+var map;
 /**
  * Model for neighborhood places
  */
-var iniplaces = [
+var place = [
   {
     name: "Cuervo Store",
-    latitude: 40.426808,
-    longitude: -3.703256,
+    lat: 40.426808,
+    lng: -3.703256,
     description: "cool clothes and music. If you like garage Rock like Burger records"
   },
   {
     name: "La Catrina - Mezcalería",
-    latitude: 40.425271,
-    longitude: -3.702007,
+    lat: 40.425271,
+    lng: -3.702007,
     description: "Mezcal, good Mexican food in a colorful cantina full of Mexican folklore. The owner has good taste in music."
   },
   {
     name: "Federal Café",
-    latitude: 40.427005,
-    longitude: -3.709271,
+    lat: 40.427005,
+    lng: -3.709271,
     description: "Good open workplace with creative breakfasts and Scandinavian design furniture"
   },
   {
     name: "Mongo Scifi & Exotic Bar",
-    latitude: 40.425136, 
-    longitude: -3.704312,
+    lat: 40.425136, 
+    lng: -3.704312,
     description: "Great place to party"
   },
   {
     name: "Café Pepe Botella",
-    latitude: 40.426588, 
-    longitude: -3.703641,
-    description: "Good coffe and jazz music"
+    lat: 40.426588, 
+    lng: -3.703641,
+    description: "Good coffee and jazz music"
   },
 ];
 
-
-var ViewModel = function() {
-  var self = this;
-  var map;
-  var markers = [];
-  var infowindows = [];
-  var weather;
-  var locationURLList = [];
-  self.search = ko.observable('');
-  self.placeList = ko.observableArray([]);
-  
-  
-  //Create a place object
-  var Place = function(data){
+var Place = function(data) {
     this.name = data.name;
-    this.lat = data.latitude;
-    this.long = data.longitude;
+    this.lat = data.lat;
+    this.lng = data.lng;
     this.description = data.description;
+};
 
-    name_string = String(data.name);
-    // create marker
-    if (typeof google != "undefined"){
-      this.marker = new google.maps.Marker({
-        position: new google.maps.LatLng(data.latitude, data.longitude),
-        title: name_string,
-        map: map,
-        draggable: false,
-        icon:   'img/marker.svg', 
-        animation: google.maps.Animation.DROP
-      });
-    }
 
-    var contentString = '<div id="content">'+
-      '<div id="siteNotice">'+
-      '</div>'+
-      '<h4 id="firstHeading" class="firstHeading">'+
-      this.name +'</h4>'+
-      '<div id="bodyContent">'+
-      '<p>'+ this.description +'</p>'+
-      '</div>'+
-      '</div>';
-    
-    if (typeof google != "undefined"){
-      var infowindow = new google.maps.InfoWindow({
-      content: contentString
-      });
-    }
+// Call instagram api to load external data into place model
+var instagramCall = function(){ 
+            console.log(self); 
+            $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                data: true,
+                url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
+            }).success(function(data) {
+                console.log("instagram ",data);
+                // add external data to place model
+                for (var i = 0; i < data.data.length; i++){
+                    var location = data.data[i].location;
+                    console.log(location);
+                    var instlocation = {
+                        name:location.name ,
+                        lat: location.latitude,
+                        lng: location.longitude,
+                        description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''>"    
+                    };
+                place.push(instlocation);
+                }
+                // initialize map after data has been added to place model
+                initMap();
+            });
+        }();    
 
-    function toggleBounce() {
-        // stop all other markers from beeing animated
-        for (var i = 0; i < markers.length; i++) {
-          markers[i].setAnimation(null);
+
+
+
+var initMap = function() {
+    var ViewModel = function() {
+        var self = this;
+        this.placeList = ko.observableArray([]);
+        this.igImages = ko.observableArray([]);
+        this.search = ko.observable('');
+        
+
+       
+
+        // Create place object. Push to array.
+        place.forEach(function(item) {
+            this.placeList.push(new Place(item));
+        }, this);
+        // set first place
+        this.currentPlace = ko.observable(this.placeList()[0]);
+        // list click
+        this.setPlace = function(clickedPlace) {
+            google.maps.event.trigger(clickedPlace.marker, 'click');
+        };
+        this.renderMarkers = function(arrayInput) {
+            // use place array to create marker array
+            for (var i = 0, len = arrayInput.length; i < len; i++) {
+                var location = {
+                    lat: arrayInput[i].lat,
+                    lng: arrayInput[i].lng
+                };
+                var marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    icon:   'img/marker.svg', 
+                    animation: google.maps.Animation.DROP,
+                    myPlace: arrayInput[i]
+                });
+                // save the map marker as part of the location object
+                arrayInput[i].marker = marker;
+                // create event listener in external function
+                self.createEventListener(arrayInput[i]);
+            };
+        };
+        function toggleBounce(myMarker) {
+            myMarker.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function() {
+                myMarker.setAnimation(null);
+            }, 2500);
         }
-        // animate marker
-        marker.setAnimation(google.maps.Animation.BOUNCE);    
-    }
-
-    google.maps.event.addListener(this.marker, 'click', function(){    
-      // close all other info windows to avoid multiple windows beeing open simultaniously
-      for (var i = 0; i < infowindows.length; i++) {
-        infowindows[i].close();
-      }
-      // open selected infowindow
-      infowindow.open(map, marker);
-      // animate selected marker
-      toggleBounce();
-    });
-
-
-    markers.push(this.marker);
-    infowindows.push(infowindow);
-  };
-
-
-  function initializeMap() {
-    var malasana;
-    
-    try {
-        // This next line makes `malasana` a new Google Map JavaScript Object
-        malasana = new google.maps.LatLng(40.426394, -3.704878);
-      } catch (err) {
-        //if google map api didnt respond
-        $('#map').hide();
-        $('#map-error').html('<h5>There is problem to retrieve data from google map</br>Please try again later</h5>');
-      }
-    
-    var mapCanvas = document.getElementById('map');
-    var mapOptions = {
-      zoom: 17,
-      center: malasana,
-      mapTypeControl: true,
-      mapTypeControlOptions: {
-        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-        position: google.maps.ControlPosition.LEFT_BOTTOM
-      },
-      zoomControl: true,
-      zoomControlOptions: {
-          position: google.maps.ControlPosition.RIGHT_CENTER
-      },
-      scaleControl: true,
-      streetViewControl: true,
-      streetViewControlOptions: {
-          position: google.maps.ControlPosition.RIGHT_BOTTOM
-      },
-        styles: [{"featureType":"landscape.fill","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#e0efef"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"hue":"#1900ff"},{"color":"#c0e8e8"}]},{"featureType":"road","elementType":"geometry","stylers":[{"lightness":100},{"visibility":"on"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"visibility":"on"},{"lightness":700}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#7dcdcd"}]}]
-
-
-      };
-    if (typeof google != "undefined"){
-      map = new google.maps.Map(mapCanvas, mapOptions);
-    }
-  }
-  initializeMap();
-
-  //Push the Trails into a list of viewmodel trail objects
-  if (typeof google != "undefined"){
-    iniplaces.forEach(function(placeitem){
-      self.placeList.push(new Place(placeitem));
-    });
-  }
-
-  //Create a binding to listen to the click on the list
-  self.clickMarker = function(place){
-    var placeName = place.name;
-    for (var i in markers){
-      if (markers[i].title === placeName) {
-        google.maps.event.trigger(markers[i], 'click');
-      }
-    }
-  };
-
-  // API calls
-  var flickrCall = function(){
-    var url = "https://api.flickr.com/services/rest/?&method=flickr.people.getPublicPhotos&api_key=97d1c372b413a02c10ef47541ba743a8&user_id=137064132@N04&format=json&jsoncallback=?"; 
-
-    $.getJSON(url
-        ).success(
-          function(data) {
-            console.log('yessss');
-
-            console.log("flickr", data);
-          }).fail(
-              function(e) {
-              console.log('nooooo...%o', e);
-          });
-
-          console.log('sent');         
-    };
-
-    var facebookCall = function () {
-     
-    };
-
-// call openweather api and set weather animation on map canvas
-  var setWeather = function(){
-    var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
-    var weather;
-    // call openweather api
-    $.getJSON(url, function(data){
-        console.log("openweather ", data);
-        weather = data.weather[0].description;
-        console.log(weather);
-        // set weather animation on map
-        switch (weather) {
-          case "Sky is Clear":
-            $(".sunny").show();
-            break;
-          case "few clouds":
-            $(".sunny").show();
-            $(".cloudy").show();
-            break;
-          case "Scattered Clouds":
-            $(".sunny").show();
-            $(".cloudy").show();
-            break;
-          case "broken clouds":
-            $(".sunny").show();
-            $(".cloudy").show();
-            break;
-          case "overcast clouds":
-            $(".cloudy").show();
-            break;
-          case "rain":
-            $(".rainy").show();
-            $(".cloudy").show();
-            break;
-           case "Thunderstorm":
-            $(".rainy").show();
-            $(".cloudy").show();
-            break;
-           case "snow":
-            $(".snowy").show();
-            $(".cloudy").show();
-            break;
-           case "mist":
-            $(".cloudy").show();
-            break;
-          default:
-            console.log("Sorry, " + weather + "does not match any coded weather description.");
-        }
-      }); 
-    };
-
-  var instagramCall = function(){
-    // find location ID within 700 meters of the neighborhood's coordinates
-    var igLat = 40.426394;
-    var igLng = -3.704878;
-
-    $.ajax({
-      type: 'GET',
-      dataType: 'jsonp',
-      data: true,
-      url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
-      }).done(function(data) {
-        console.log("instagram ",data);
-        for (var i = 0; i < data.data.length; i++){
-          console.log(data.data[i]);
-          
-          
-
-
-        }
-    });
-  };
-  instagramCall();
-  setWeather();
-  flickrCall();
-  facebookCall();
-
-  
-  self.hideWeather = function(){
-    $(".weather").hide();
-  };
-
-
-  // Search Function
-
-  self.filteredItems = ko.computed(function() {
+        this.createEventListener = function(location) {
+            location.marker.addListener('click', function () {
+                toggleBounce(location.marker);
+                self.currentPlace(location);
+                self.updateContent(location);
+                //self.instagramImg(location.lat, location.lng);
+                // does the infowindow exist?
+                if (self.infowindow) {
+                    self.infowindow.close(); // close the infowindow
+                }
+                // open the infowindow with this map marker location
+                self.infowindow.open(map, location.marker);
+            });
+        };
+        this.filteredItems = ko.computed(function() {
             var searchTerm = self.search().toLowerCase();
             // is the search term undefined or empty?
             if (!searchTerm || searchTerm === '') {
@@ -289,21 +151,116 @@ var ViewModel = function() {
                         // does the place name contain the search term?
                         if (item.name.toLowerCase().indexOf(searchTerm) < 0) {
                             item.marker.setVisible(false); // hide the map marker
-                            
                         } else {
                             item.marker.setVisible(true); // show the map marker
                         }
                         return item.name.toLowerCase().indexOf(searchTerm) !== -1; // return filtered location list
                     });
-
             }
+
         });
+        // Google Maps
+        var styleArray = [{"featureType":"landscape.fill","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#e0efef"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"hue":"#1900ff"},{"color":"#c0e8e8"}]},{"featureType":"road","elementType":"geometry","stylers":[{"lightness":100},{"visibility":"on"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"visibility":"on"},{"lightness":700}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#7dcdcd"}]}];
 
-  
-  
-};
+        if(map = true){
+            // This next line makes `malasana` a new Google Map JavaScript Object
+            var malasana = new google.maps.LatLng(40.426394, -3.704878);
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: malasana,
+                zoom: 17,
+                mapTypeControl: false,
+                scrollwheel: false,
+                styles: styleArray,
+                streetViewControl: false
+            });
+        } else {
+            alert('Google Maps Error');
+        }
+        // this.markers = [];
+        this.infowindow = new google.maps.InfoWindow({
+            maxWidth: 300
+        });
+        this.renderMarkers(self.placeList());
+
+        // API calls
+
+        // call openweather api and set weather animation on map canvas
+        var setWeather = function(){
+            var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+            var weather;
+            // call openweather api
+            $.getJSON(url, function(data){
+                console.log("openweather ", data);
+                weather = data.weather[0].description;
+                console.log(weather);
+                // set weather animation on map
+                switch (weather) {
+                  case "Sky is Clear":
+                    $(".sunny").show();
+                    break;
+                  case "few clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "Scattered Clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "broken clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "overcast clouds":
+                    $(".cloudy").show();
+                    break;
+                  case "rain":
+                    $(".rainy").show();
+                    $(".cloudy").show();
+                    break;
+                   case "Thunderstorm":
+                    $(".rainy").show();
+                    $(".cloudy").show();
+                    $(".stormy").show();
+                    break;
+                   case "snow":
+                    $(".snowy").show();
+                    $(".cloudy").show();
+                    break;
+                   case "mist":
+                    $(".cloudy").show();
+                    break;
+                  default:
+                    console.log("Sorry, " + weather + "does not match any coded weather description.");
+                }
+              }); 
+            };
 
 
-$(document).ready(function(){
+            
+        setWeather();
+        
+        self.hideWeather = function(){
+            $(".weather").hide();
+        };
+
+    };
+    // infowindow content
+    ViewModel.prototype.updateContent = function(place) {
+        var html =  '<div id="content">'+
+      '<div id="siteNotice">'+
+      '</div>'+
+      '<h4 id="firstHeading" class="firstHeading">'+
+      place.name +'</h4>'+
+      '<div id="bodyContent">'+
+      '<p>'+ place.description +'</p>'+
+      '</div>'+
+      '</div>';
+        this.infowindow.setContent(html);
+    };
+
+ 
+       
+    
+   
     ko.applyBindings(new ViewModel());
-});
+};
