@@ -7,31 +7,36 @@ var place = [
     name: "Cuervo Store",
     lat: 40.426808,
     lng: -3.703256,
-    description: "cool clothes and music. If you like garage Rock like Burger records"
+    description: "cool clothes and music. If you like garage Rock like Burger records",
+    icon: 'img/marker.svg'
   },
   {
     name: "La Catrina - Mezcalería",
     lat: 40.425271,
     lng: -3.702007,
-    description: "Mezcal, good Mexican food in a colorful cantina full of Mexican folklore. The owner has good taste in music."
+    description: "Mezcal, good Mexican food in a colorful cantina full of Mexican folklore. The owner has good taste in music.",
+    icon: 'img/marker.svg'
   },
   {
     name: "Federal Café",
     lat: 40.427005,
     lng: -3.709271,
-    description: "Good open workplace with creative breakfasts and Scandinavian design furniture"
+    description: "Good open workplace with creative breakfasts and Scandinavian design furniture",
+    icon: 'img/marker.svg'
   },
   {
     name: "Mongo Scifi & Exotic Bar",
     lat: 40.425136, 
     lng: -3.704312,
-    description: "Great place to party"
+    description: "Great place to party",
+    icon: 'img/marker.svg'
   },
   {
     name: "Café Pepe Botella",
     lat: 40.426588, 
     lng: -3.703641,
-    description: "Good coffee and jazz music"
+    description: "Good coffee and jazz music",
+    icon: 'img/marker.svg'
   },
 ];
 
@@ -40,6 +45,7 @@ var Place = function(data) {
     this.lat = data.lat;
     this.lng = data.lng;
     this.description = data.description;
+    this.icon = data.icon;
 };
 
 
@@ -61,7 +67,8 @@ var instagramCall = function(){
                         name:location.name ,
                         lat: location.latitude,
                         lng: location.longitude,
-                        description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''>"    
+                        description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''>",
+                        icon: "img/instagram-icon.svg"    
                     };
                 place.push(instlocation);
                 }
@@ -103,7 +110,7 @@ var initMap = function() {
                 var marker = new google.maps.Marker({
                     position: location,
                     map: map,
-                    icon:   'img/marker.svg', 
+                    icon: arrayInput[i].icon, 
                     animation: google.maps.Animation.DROP,
                     myPlace: arrayInput[i]
                 });
