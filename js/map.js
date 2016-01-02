@@ -263,15 +263,19 @@ var initMap = function() {
                   default:
                     console.log("Sorry, " + weather + " does not match any coded weather description.");
                 }
-              }); 
+              }).error(function(e){
+                    alert('Weather API Error');
+                });
             };
 
 
             
         setWeather();
         
+        
         self.hideWeather = function(){
             $(".weather").hide();
+            $("#weather-button").hide();
         };
 
         self.showInstPosts = function(){
@@ -279,6 +283,7 @@ var initMap = function() {
                 self.hideInstList(false);
                 self.showInstList(true);
                 self.placeList()[i].marker.setVisible(true);
+                $("#post-button").hide();
             }
         };
 
