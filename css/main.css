@@ -108,6 +108,10 @@ html, body {
     background: rgba(255,255,255,0.2);
 }
 
+.sidebar-nav li h3 {
+    color: #999999;
+}
+
 .sidebar-nav li a:active,
 .sidebar-nav li a:focus {
     text-decoration: none;
@@ -132,6 +136,14 @@ html, body {
 /* Weather */
 .weather {
     z-index: 10;
+}
+
+/* Buttons */
+#buttons {
+    z-index: 10;
+    position: absolute;
+    display: block;
+    margin-left: 5%;
 }
 
 /* Animated Hamburger Icon  */

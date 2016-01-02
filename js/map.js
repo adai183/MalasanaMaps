@@ -8,35 +8,45 @@ var place = [
     lat: 40.426808,
     lng: -3.703256,
     description: "cool clothes and music. If you like garage Rock like Burger records",
-    icon: 'img/marker.svg'
+    icon: 'img/marker.svg',
+    tag: "hardcoded",
+    visible: true
   },
   {
     name: "La Catrina - Mezcalería",
     lat: 40.425271,
     lng: -3.702007,
     description: "Mezcal, good Mexican food in a colorful cantina full of Mexican folklore. The owner has good taste in music.",
-    icon: 'img/marker.svg'
+    icon: 'img/marker.svg',
+    tag: "hardcoded",
+    visible: true
   },
   {
     name: "Federal Café",
     lat: 40.427005,
     lng: -3.709271,
     description: "Good open workplace with creative breakfasts and Scandinavian design furniture",
-    icon: 'img/marker.svg'
+    icon: 'img/marker.svg',
+    tag: "hardcoded",
+    visible: true
   },
   {
     name: "Mongo Scifi & Exotic Bar",
     lat: 40.425136, 
     lng: -3.704312,
     description: "Great place to party",
-    icon: 'img/marker.svg'
+    icon: 'img/marker.svg',
+    tag: "hardcoded",
+    visible: true
   },
   {
     name: "Café Pepe Botella",
     lat: 40.426588, 
     lng: -3.703641,
     description: "Good coffee and jazz music",
-    icon: 'img/marker.svg'
+    icon: 'img/marker.svg',
+    tag: "hardcoded",
+    visible: true
   },
 ];
 
@@ -46,6 +56,8 @@ var Place = function(data) {
     this.lng = data.lng;
     this.description = data.description;
     this.icon = data.icon;
+    this.tag = data.tag;
+    this.visible = data.visible;
 };
 
 
@@ -58,6 +70,7 @@ var instagramCall = function(){
                 data: true,
                 url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
             }).success(function(data) {
+                window.clearTimeout(i);
                 console.log("instagram ",data);
                 // add external data to place model
                 for (var i = 0; i < data.data.length; i++){
@@ -68,10 +81,14 @@ var instagramCall = function(){
                         lat: location.latitude,
                         lng: location.longitude,
                         description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''>",
-                        icon: "img/instagram-icon.svg"    
+                        icon: "img/instagram-icon.svg",
+                        tag: "instagram" ,
+                        visible: false  
                     };
                 place.push(instlocation);
                 }
+                // clear fallback timeout when instagram api successfull
+                clearTimeout(fallback);
                 // initialize map after data has been added to place model
                 initMap();
             });
@@ -86,8 +103,8 @@ var initMap = function() {
         this.placeList = ko.observableArray([]);
         this.igImages = ko.observableArray([]);
         this.search = ko.observable('');
-        
-
+        self.showInstList = ko.observable(false);
+        self.hideInstList = ko.observable(true);
        
 
         // Create place object. Push to array.
@@ -107,15 +124,22 @@ var initMap = function() {
                     lat: arrayInput[i].lat,
                     lng: arrayInput[i].lng
                 };
+                
                 var marker = new google.maps.Marker({
                     position: location,
                     map: map,
                     icon: arrayInput[i].icon, 
                     animation: google.maps.Animation.DROP,
                     myPlace: arrayInput[i]
-                });
+                    });
+                
                 // save the map marker as part of the location object
                 arrayInput[i].marker = marker;
+
+                // hide instagram markers
+                if (arrayInput[i].visible === false){
+                    arrayInput[i].marker.setVisible(false);
+                } 
                 // create event listener in external function
                 self.createEventListener(arrayInput[i]);
             };
@@ -209,7 +233,7 @@ var initMap = function() {
                     $(".sunny").show();
                     $(".cloudy").show();
                     break;
-                  case "Scattered Clouds":
+                  case "scattered clouds":
                     $(".sunny").show();
                     $(".cloudy").show();
                     break;
@@ -237,7 +261,7 @@ var initMap = function() {
                     $(".cloudy").show();
                     break;
                   default:
-                    console.log("Sorry, " + weather + "does not match any coded weather description.");
+                    console.log("Sorry, " + weather + " does not match any coded weather description.");
                 }
               }); 
             };
@@ -248,6 +272,14 @@ var initMap = function() {
         
         self.hideWeather = function(){
             $(".weather").hide();
+        };
+
+        self.showInstPosts = function(){
+            for (var i = 0; i < self.placeList().length; i++) {
+                self.hideInstList(false);
+                self.showInstList(true);
+                self.placeList()[i].marker.setVisible(true);
+            }
         };
 
     };
@@ -271,3 +303,8 @@ var initMap = function() {
    
     ko.applyBindings(new ViewModel());
 };
+
+// set fallback to make sure app loads even when instagram api fails
+var fallback = setTimeout(function(){
+        initMap();
+    }, 8000);

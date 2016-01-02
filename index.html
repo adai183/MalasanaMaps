@@ -38,14 +38,17 @@
                     <div class="form-group">
                         <input type="text" class="form-control" data-bind="value: search, valueUpdate: 'afterkeydown'" placeholder="Search">
                     </div>
-                 </form> 
+                 </form>
                 <!--Elements-->   
                 <ul class="sidebar-nav">
-                    <li data-bind="foreach: filteredItems">
-                        <a href="#" data-bind="text: $data.name, click: $parent.setPlace" ></a>
-                    </li>
                     <li>
-                        <a href="#" data-bind="click: $root.hideWeather"> Hide Weather</a>
+                        <h3>Locations:</h3>
+                    </li>
+                    <li data-bind="foreach: filteredItems, visible: hideInstList">
+                        <a href="#" data-bind="text: $data.name, click: $parent.setPlace, visible: $data.visible" ></a>
+                    </li>
+                    <li data-bind="foreach: filteredItems, visible: showInstList">
+                        <a href="#" data-bind="text: $data.name, click: $parent.setPlace" ></a>
                     </li>
                 </ul>
             </div>
@@ -54,6 +57,8 @@
 
             <!-- Map -->
             <div id="map-container" >
+                
+            <!-- Weather Animation -->
                 <div class="sunny weather" style="display: none;"></div> 
                 <div class="cloudy weather" style="display: none;"></div>
                 <div class="rainy weather" style="display: none;"></div>
@@ -61,12 +66,22 @@
                 <div class="rainbow weather" style="display: none;"></div>
                 <div class="starry weather" style="display: none;"></div>
                 <div class="stormy weather" style="display: none;"></div>
-    
+                
             
                 <div id="map"></div>
-                <div id="map-error" class="text-center"></div>
             </div>      
                 <a href="#menu-toggle" id="menu-toggle" class="active" ><span></span></a> 
+
+                <!-- Buttons -->
+                <div id="buttons">
+                    <button class="btn btn-success" data-bind="click: $root.showInstPosts">
+                        show posts
+                    </button>
+                    <button href="#" class="btn btn-primary" data-bind="click: $root.hideWeather">
+                        hide weather
+                    </button>
+                </div>
+
         </div> 
         <!-- End content -->
         
