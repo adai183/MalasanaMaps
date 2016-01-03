@@ -1,6 +1,8 @@
 #Project 5: Udacity
 ## Neighborhood Map
 
+Check out the [live link](http://adai183.github.io/MalasanaMaps).
+
 ### Description
 > You will develop a single-page application featuring a map of your
 > neighborhood or a neighborhood you would like to visit. You will then add
@@ -15,6 +17,19 @@
 None so far.
 
 ### Sources
-    Google Maps API: https://developers.google.com/maps/?hl=en
 
-    Knockout JS: http://knockoutjs.com/index.html
+[Google Maps API](https://developers.google.com/maps/?hl=en)
+
+[Open Weather Map API](http://openweathermap.org/api)
+
+
+[Instagram API](https://www.instagram.com/developer/)
+
+
+[Knockout JS](http://knockoutjs.com/index.html)
+
+[Animated weather icons ](http://codepen.io/nizhanjun/pen/NqOEme) from codepen.io
+
+[Initializr](http://www.initializr.com/) Boilerplate
+
+   
