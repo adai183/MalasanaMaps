@@ -22,9 +22,7 @@ None so far.
 
 [Open Weather Map API](http://openweathermap.org/api)
 
-
 [Instagram API](https://www.instagram.com/developer/)
-
 
 [Knockout JS](http://knockoutjs.com/index.html)
 

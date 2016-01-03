@@ -63,34 +63,34 @@ var Place = function(data) {
 
 // Call instagram api to load external data into place model
 var instagramCall = function(){ 
-            console.log(self); 
             $.ajax({
                 type: 'GET',
                 dataType: 'jsonp',
                 data: true,
-                url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f'
-            }).success(function(data) {
-                window.clearTimeout(i);
-                console.log("instagram ",data);
-                // add external data to place model
-                for (var i = 0; i < data.data.length; i++){
-                    var location = data.data[i].location;
-                    console.log(location);
-                    var instlocation = {
-                        name:location.name ,
-                        lat: location.latitude,
-                        lng: location.longitude,
-                        description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''>",
-                        icon: "img/instagram-icon.svg",
-                        tag: "instagram" ,
-                        visible: false  
-                    };
-                place.push(instlocation);
-                }
-                // clear fallback timeout when instagram api successfull
-                clearTimeout(fallback);
-                // initialize map after data has been added to place model
-                initMap();
+                url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f',
+                success: function(data) {
+                    window.clearTimeout(i);
+                    console.log("instagram ",data);
+                    // add external data to place model
+                    for (var i = 0; i < data.data.length; i++){
+                        var location = data.data[i].location;
+                        console.log(location);
+                        var instlocation = {
+                            name:location.name ,
+                            lat: location.latitude,
+                            lng: location.longitude,
+                            description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''>",
+                            icon: "img/instagram-icon.svg",
+                            tag: "instagram" ,
+                            visible: false  
+                        };
+                    place.push(instlocation);
+                    }
+                    // clear fallback timeout when instagram api successfull
+                    clearTimeout(fallback);
+                    // initialize map after data has been added to place model
+                    initMap();
+                    }
             });
         }();    
 
@@ -207,68 +207,16 @@ var initMap = function() {
         } else {
             alert('Google Maps Error');
         }
-        // this.markers = [];
+
         this.infowindow = new google.maps.InfoWindow({
             maxWidth: 300
         });
         this.renderMarkers(self.placeList());
 
         // API calls
-
-        // inicial call to openweather api and set weather animation on map 
-        var setWeather = function(){
-            var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
-            var weather;
-            // call openweather api
-            $.getJSON(url, function(data){
-                console.log("openweather ", data);
-                weather = data.weather[0].description;
-                console.log(weather);
-                // set weather animation on map
-                switch (weather) {
-                  case "Sky is Clear":
-                    $(".sunny").show();
-                    break;
-                  case "few clouds":
-                    $(".sunny").show();
-                    $(".cloudy").show();
-                    break;
-                  case "scattered clouds":
-                    $(".sunny").show();
-                    $(".cloudy").show();
-                    break;
-                  case "broken clouds":
-                    $(".sunny").show();
-                    $(".cloudy").show();
-                    break;
-                  case "overcast clouds":
-                    $(".cloudy").show();
-                    break;
-                  case "rain":
-                    $(".rainy").show();
-                    $(".cloudy").show();
-                    break;
-                   case "Thunderstorm":
-                    $(".rainy").show();
-                    $(".cloudy").show();
-                    $(".stormy").show();
-                    break;
-                   case "snow":
-                    $(".snowy").show();
-                    $(".cloudy").show();
-                    break;
-                   case "mist":
-                    $(".cloudy").show();
-                    break;
-                  default:
-                    console.log("Sorry, " + weather + " does not match any coded weather description.");
-                }
-              }); 
-            }();
-       
         
-        // add functionalty to hide weather animation or show updated weather animation
-        var weatherChecker = true;
+        // Logic to hide weather animation or show updated weather animation
+        var weatherChecker = false;
         self.toggleWeather = function(){
             if (weatherChecker){
             $(".weather").hide();
@@ -322,9 +270,14 @@ var initMap = function() {
                 }
                 $("#weather-button").text("hide weather");
                 weatherChecker = true;
-              });
-            }   
+              }).fail(function(){
+                alert('Weather API Error');
+            });
+            }  
         };
+
+        // inicial call to openweather api and set weather animation on map 
+        self.toggleWeather();
 
         // add functionalty to hide or show instagram posts on sidebar list and on map
         var instPostChecker = true;
@@ -381,4 +334,5 @@ var initMap = function() {
 // set fallback to make sure app loads even when instagram api fails
 var fallback = setTimeout(function(){
         initMap();
+        alert("Failed to get data from Instagram API");
     }, 8000);
