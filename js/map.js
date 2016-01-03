@@ -215,7 +215,7 @@ var initMap = function() {
 
         // API calls
 
-        // call openweather api and set weather animation on map canvas
+        // inicial call to openweather api and set weather animation on map 
         var setWeather = function(){
             var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
             var weather;
@@ -263,27 +263,96 @@ var initMap = function() {
                   default:
                     console.log("Sorry, " + weather + " does not match any coded weather description.");
                 }
-              }).error(function(e){
-                    alert('Weather API Error');
-                });
-            };
-
-
-            
-        setWeather();
+              }); 
+            }();
+       
         
-        
-        self.hideWeather = function(){
+        // add functionalty to hide weather animation or show updated weather animation
+        var weatherChecker = true;
+        self.toggleWeather = function(){
+            if (weatherChecker){
             $(".weather").hide();
-            $("#weather-button").hide();
+            $("#weather-button").text("show weather");
+            weatherChecker = false;
+            
+            }else {
+            var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+            var weather;
+            // call openweather api
+            $.getJSON(url, function(data){ 
+                weather = data.weather[0].description;
+                // set weather animation on map
+                switch (weather) {
+                  case "Sky is Clear":
+                    $(".sunny").show();
+                    break;
+                  case "few clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "scattered clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "broken clouds":
+                    $(".sunny").show();
+                    $(".cloudy").show();
+                    break;
+                  case "overcast clouds":
+                    $(".cloudy").show();
+                    break;
+                  case "rain":
+                    $(".rainy").show();
+                    $(".cloudy").show();
+                    break;
+                   case "Thunderstorm":
+                    $(".rainy").show();
+                    $(".cloudy").show();
+                    $(".stormy").show();
+                    break;
+                   case "snow":
+                    $(".snowy").show();
+                    $(".cloudy").show();
+                    break;
+                   case "mist":
+                    $(".cloudy").show();
+                    break;
+                  default:
+                    console.log("Sorry, " + weather + " does not match any coded weather description.");
+                }
+                $("#weather-button").text("hide weather");
+                weatherChecker = true;
+              });
+            }   
         };
 
-        self.showInstPosts = function(){
-            for (var i = 0; i < self.placeList().length; i++) {
-                self.hideInstList(false);
-                self.showInstList(true);
-                self.placeList()[i].marker.setVisible(true);
-                $("#post-button").hide();
+        // add functionalty to hide or show instagram posts on sidebar list and on map
+        var instPostChecker = true;
+        self.toggleInstPosts = function(){
+            if (instPostChecker){
+                // handle visibilty of instagram posts in sidebar list
+                    self.hideInstList(false);
+                    self.showInstList(true);
+                    
+                // handle visibilty of each instagram post's marker on map
+                for (var i = 0; i < self.placeList().length; i++) {
+                    self.placeList()[i].marker.setVisible(true);
+                }
+                instPostChecker = false;
+                $("#post-button").text("hide posts");
+            }else{
+                // handle visibilty of instagram posts in sidebar list
+                    self.hideInstList(true);
+                    self.showInstList(false);
+                    
+                // handle visibilty of each instagram post's marker on map
+                for (var i = 0; i < self.placeList().length; i++) {
+                    if (self.placeList()[i].tag === "instagram"){
+                        self.placeList()[i].marker.setVisible(false);
+                    }
+                }
+                instPostChecker = true;
+                $("#post-button").text("show posts");
             }
         };
 
