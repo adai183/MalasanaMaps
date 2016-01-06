@@ -135,7 +135,7 @@ html, body {
 
 /* Weather */
 .weather {
-    z-index: 10;
+    z-index: 1;
 }
 
 /* Buttons */

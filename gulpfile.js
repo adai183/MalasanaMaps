@@ -10,9 +10,10 @@ gulp.task('default', ['styles', 'copy-html', 'copy-images'], function() {
 	gulp.watch('/index.html', ['copy-html']);
 	gulp.watch('/img/*', ['copy-images']);
 	gulp.watch('./dist/index.html').on('change', browserSync.reload);
+	gulp.watch('./js/*').on('change', browserSync.reload);
 	
 	browserSync.init({
-		server: './dist'
+		server: './'
 	});
 });
 

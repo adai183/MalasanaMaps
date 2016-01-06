@@ -113,9 +113,18 @@ var initMap = function() {
         }, this);
         // set first place
         this.currentPlace = ko.observable(this.placeList()[0]);
+
+        var hideNavbar = function() {
+            
+            $("#wrapper").attr("class","toggled");
+            $("#menu-toggle").attr("class", "");
+        };
+
         // list click
         this.setPlace = function(clickedPlace) {
-            google.maps.event.trigger(clickedPlace.marker, 'click');
+            google.maps.event.trigger(clickedPlace.marker, 'click');           
+            // hide sidebar when place gets clicked for better UX
+            hideNavbar();
         };
         this.renderMarkers = function(arrayInput) {
             // use place array to create marker array
@@ -142,8 +151,10 @@ var initMap = function() {
                 } 
                 // create event listener in external function
                 self.createEventListener(arrayInput[i]);
-            };
+            }
         };
+
+
         function toggleBounce(myMarker) {
             myMarker.setAnimation(google.maps.Animation.BOUNCE);
             setTimeout(function() {
@@ -155,7 +166,10 @@ var initMap = function() {
                 toggleBounce(location.marker);
                 self.currentPlace(location);
                 self.updateContent(location);
-                //self.instagramImg(location.lat, location.lng);
+                
+                // hide sidebar when place gets clicked for better UX
+                hideNavbar();
+                
                 // does the infowindow exist?
                 if (self.infowindow) {
                     self.infowindow.close(); // close the infowindow
@@ -228,6 +242,7 @@ var initMap = function() {
             var weather;
             // call openweather api
             $.getJSON(url, function(data){ 
+                console.log(data);
                 weather = data.weather[0].description;
                 // set weather animation on map
                 switch (weather) {
@@ -250,6 +265,9 @@ var initMap = function() {
                     $(".cloudy").show();
                     break;
                   case "drizzle":
+                    $(".cloudy").show();
+                    break;
+                  case "light intensity drizzle":
                     $(".cloudy").show();
                     break;
                   case "rain":
