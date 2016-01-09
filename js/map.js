@@ -13,7 +13,7 @@ var place = [
     visible: true
   },
       {
-        name: "La Catrina - Mezcalería",
+        name: "La Catrina",
         lat: 40.425271,
         lng: -3.702007,
         description: "Mezcal, good Mexican food in a colorful cantina full of Mexican folklore. The owner has good taste in music.",
@@ -31,19 +31,19 @@ var place = [
         visible: true
       },
       {
-        name: "Mongo Scifi & Exotic Bar",
-        lat: 40.425136, 
-        lng: -3.704312,
-        description: "Great place to party",
+        name: "Toma Café",
+        lat: 40.426464, 
+        lng: -3.705959,
+        description: "Best coffee in town",
         icon: 'img/marker.svg',
         tag: "hardcoded",
         visible: true
       },
       {
-        name: "Café Pepe Botella",
-        lat: 40.426588, 
-        lng: -3.703641,
-        description: "Good coffee and jazz music",
+        name: "La Pescadería",
+        lat: 40.422898, 
+        lng: -3.703014,
+        description: "Awesome mediterranean fish restaurant",
         icon: 'img/marker.svg',
         tag: "hardcoded",
         visible: true
@@ -59,6 +59,7 @@ var Place = function(data) {
     this.tag = data.tag;
     this.visible = data.visible;
 };
+
 
 
 // Call instagram api to load external data into place model
@@ -98,7 +99,7 @@ var instagramCall = function(){
                     initMap();
                     }
             });
-        }();    
+}();    
 
 
 
@@ -126,6 +127,8 @@ var initMap = function() {
         place.forEach(function(item) {
             this.placeList.push(new Place(item));
         }, this);
+
+    
         // set first place
         this.currentPlace = ko.observable(this.placeList()[0]);
 
@@ -182,10 +185,10 @@ var initMap = function() {
         }
         this.createEventListener = function(location) {
             location.marker.addListener('click', function () {
+                self.foursquareCall(location);
                 toggleBounce(location.marker);
                 self.currentPlace(location);
-                self.updateContent(location);
-                
+                //self.updateContent(location);
                 // hide sidebar and weather animation when place gets clicked for better UX
                 hideNavbar();
                 $(".weather").hide();
@@ -359,6 +362,50 @@ var initMap = function() {
         };
 
     };
+
+
+
+
+    // Instagram API
+    ViewModel.prototype.foursquareCall = function(location) {
+        var self = this;
+
+        $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                data: true,
+                url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' +location.lat+',%20'+location.lng+'%20',
+                success: function(data) { 
+                    //console.log("foursquare  ",data);
+                    var venues = data.response.venues;
+                    for (var i = 0; i < venues.length; i++){
+                        // check wether if there is data on foursquare for this location
+                        if (location.name === venues[i].name){
+                            // get unique venue id
+                            location.foursquareId = venues[i].id;
+                        }
+                    }
+                }
+            }).done(function(){
+                $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                data: true,
+                url: 'https://api.foursquare.com/v2/venues/'+location.foursquareId+'/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
+                success: function(data) {  
+                   var item = data.response.photos.items[0];
+                   location.photoUrl = item.prefix + "width300" + item.suffix;
+                   console.log(location.photoUrl);
+
+                }
+            });
+        });   
+    };
+
+
+
+
+
     // infowindow content
     ViewModel.prototype.updateContent = function(place) {
         var html =  '<div id="content">'+
@@ -368,6 +415,7 @@ var initMap = function() {
       place.name +'</h4>'+
       '<div id="bodyContent">'+
       '<p>'+ place.description +'</p>'+
+      '<img src="'+ place.photoUrl+ '">'+
       '</div>'+
       '</div>';
         this.infowindow.setContent(html);
