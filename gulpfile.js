@@ -7,7 +7,7 @@ var minifyCss = require('gulp-minify-css');
 
 gulp.task('default', ['styles', 'copy-html', 'copy-images'], function() {
 	gulp.watch('css/**/*.css', ['styles']);
-	gulp.watch('/index.html', ['copy-html']);
+	gulp.watch('./index.html', ['copy-html']);
 	gulp.watch('/img/*', ['copy-images']);
 	gulp.watch('./dist/index.html').on('change', browserSync.reload);
 	gulp.watch('./js/*').on('change', browserSync.reload);

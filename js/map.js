@@ -74,12 +74,18 @@ var instagramCall = function(){
                     // add external data to place model
                     for (var i = 0; i < data.data.length; i++){
                         var location = data.data[i].location;
+                        var comment;
+                        if (data.data[i].caption !== null){
+                            comment = data.data[i].caption.text;
+                        }else {
+                            comment = "";
+                        }
                         console.log(location);
                         var instlocation = {
                             name:location.name ,
                             lat: location.latitude,
                             lng: location.longitude,
-                            description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''>",
+                            description: "<img class='img-responsive' style='width:300px; height: 300px;' src='"+data.data[i].images.standard_resolution.url + "''><br><h4>" + comment + "</h4>",
                             icon: "img/instagram-icon.svg",
                             tag: "instagram" ,
                             visible: false  
@@ -105,6 +111,15 @@ var initMap = function() {
         this.search = ko.observable('');
         self.showInstList = ko.observable(false);
         self.hideInstList = ko.observable(true);
+        var weather;
+        // create observables to controle weather animation
+        self.sunny = ko.observable(false);
+        self.cloudy = ko.observable(false);
+        self.rainy = ko.observable(false);
+        self.snowy = ko.observable(false);
+        self.rainbow = ko.observable(false);
+        self.starry = ko.observable(false);
+        self.stormy = ko.observable(false);
        
 
         // Create place object. Push to array.
@@ -123,8 +138,12 @@ var initMap = function() {
         // list click
         this.setPlace = function(clickedPlace) {
             google.maps.event.trigger(clickedPlace.marker, 'click');           
-            // hide sidebar when place gets clicked for better UX
+            // hide sidebar and weather animation when place gets clicked for better UX
             hideNavbar();
+            $(".weather").hide();
+            $("#weather-button").text("show weather");
+            weatherChecker = false;
+            
         };
         this.renderMarkers = function(arrayInput) {
             // use place array to create marker array
@@ -167,9 +186,12 @@ var initMap = function() {
                 self.currentPlace(location);
                 self.updateContent(location);
                 
-                // hide sidebar when place gets clicked for better UX
+                // hide sidebar and weather animation when place gets clicked for better UX
                 hideNavbar();
-                
+                $(".weather").hide();
+                $("#weather-button").text("show weather");
+                weatherChecker = false;
+                 
                 // does the infowindow exist?
                 if (self.infowindow) {
                     self.infowindow.close(); // close the infowindow
@@ -239,7 +261,6 @@ var initMap = function() {
             
             }else {
             var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
-            var weather;
             // call openweather api
             $.getJSON(url, function(data){ 
                 console.log(data);
@@ -247,48 +268,55 @@ var initMap = function() {
                 // set weather animation on map
                 switch (weather) {
                   case "Sky is Clear":
-                    $(".sunny").show();
+                    self.sunny(true);
                     break;
                   case "few clouds":
-                    $(".sunny").show();
-                    $(".cloudy").show();
+                    self.sunny(true);
+                    self.cloudy(true);
                     break;
                   case "scattered clouds":
-                    $(".sunny").show();
-                    $(".cloudy").show();
+                    self.sunny(true);
+                    self.cloudy(true);
                     break;
                   case "broken clouds":
-                    $(".sunny").show();
-                    $(".cloudy").show();
+                    self.sunny(true);
+                    self.cloudy(true);
                     break;
                   case "overcast clouds":
-                    $(".cloudy").show();
+                    self.cloudy(true);
+                    break;
+                   case "light intensity drizzle":
+                    self.cloudy(true);
                     break;
                   case "drizzle":
-                    $(".cloudy").show();
+                    self.cloudy(true);
                     break;
                   case "light intensity drizzle":
-                    $(".cloudy").show();
+                    self.cloudy(true);
+                    break;
+                  case "moderate rain":
+                    self.rainy(true);
                     break;
                   case "rain":
-                    $(".rainy").show();
-                    $(".cloudy").show();
+                    self.cloudy(true);
+                    self.rainy(true);
                     break;
                    case "Thunderstorm":
-                    $(".rainy").show();
-                    $(".cloudy").show();
-                    $(".stormy").show();
+                    self.cloudy(true);
+                    self.rainy(true);
+                    self.stormy(true);
                     break;
                    case "snow":
-                    $(".snowy").show();
-                    $(".cloudy").show();
+                    self.cloudy(true);
+                    self.snowy(true);
                     break;
                    case "mist":
-                    $(".cloudy").show();
+                    self.cloudy(true);
                     break;
                   default:
                     console.log("Sorry, " + weather + " does not match any coded weather description.");
                 }
+
                 $("#weather-button").text("hide weather");
                 weatherChecker = true;
               }).fail(function(){
