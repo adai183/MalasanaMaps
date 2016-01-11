@@ -58,6 +58,7 @@ var Place = function(data) {
     this.icon = data.icon;
     this.tag = data.tag;
     this.visible = data.visible;
+    this.photoUrl = data.photoUrl;
 };
 
 
@@ -112,6 +113,7 @@ var initMap = function() {
         this.search = ko.observable('');
         self.showInstList = ko.observable(false);
         self.hideInstList = ko.observable(true);
+        self.photoUrl = ko.observable("https://irs3.4sqi.net/img/general/width300/1GY0S2Z51MV4N1N2PWXWYKPXCLDQTQ4U4MS0RXSK2AC5JX5X.jpg");
         var weather;
         // create observables to controle weather animation
         self.sunny = ko.observable(false);
@@ -189,6 +191,7 @@ var initMap = function() {
                 toggleBounce(location.marker);
                 self.currentPlace(location);
                 //self.updateContent(location);
+
                 // hide sidebar and weather animation when place gets clicked for better UX
                 hideNavbar();
                 $(".weather").hide();
@@ -203,6 +206,7 @@ var initMap = function() {
                 self.infowindow.open(map, location.marker);
             });
         };
+        
         this.filteredItems = ko.computed(function() {
             var searchTerm = self.search().toLowerCase();
             // is the search term undefined or empty?
@@ -248,7 +252,8 @@ var initMap = function() {
         }
 
         this.infowindow = new google.maps.InfoWindow({
-            maxWidth: 300
+            maxWidth: 300,
+            content: $(".info-window").prop('outerHTML'),
         });
         this.renderMarkers(self.placeList());
 
@@ -366,7 +371,7 @@ var initMap = function() {
 
 
 
-    // Instagram API
+    // Foursquare API
     ViewModel.prototype.foursquareCall = function(location) {
         var self = this;
 
@@ -383,6 +388,7 @@ var initMap = function() {
                         if (location.name === venues[i].name){
                             // get unique venue id
                             location.foursquareId = venues[i].id;
+                            location.photoUrl = "";
                         }
                     }
                 }
@@ -397,6 +403,7 @@ var initMap = function() {
                    location.photoUrl = item.prefix + "width300" + item.suffix;
                    console.log(location.photoUrl);
 
+                   
                 }
             });
         });   
@@ -405,23 +412,23 @@ var initMap = function() {
 
 
 
-
+    /*
     // infowindow content
     ViewModel.prototype.updateContent = function(place) {
-        var html =  '<div id="content">'+
-      '<div id="siteNotice">'+
-      '</div>'+
-      '<h4 id="firstHeading" class="firstHeading">'+
-      place.name +'</h4>'+
-      '<div id="bodyContent">'+
-      '<p>'+ place.description +'</p>'+
-      '<img src="'+ place.photoUrl+ '">'+
-      '</div>'+
-      '</div>';
-        this.infowindow.setContent(html);
+         var html =  '<div id="content">'+
+                  '<div id="siteNotice">'+
+                  '</div>'+
+                  '<h4 id="firstHeading" class="firstHeading">'+
+                  place.name +'</h4>'+
+                  '<div id="bodyContent">'+
+                  '<p>'+ place.description +'</p>'+
+                  '<img src="'+ place.photoUrl+ '">'+
+                  '</div>'+
+                  '</div>';
+                  this.infowindow.setContent(html);
     };
 
- 
+ */
        
     
    
