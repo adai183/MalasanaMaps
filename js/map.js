@@ -354,6 +354,9 @@ var initMap = function() {
                   case "light intensity drizzle":
                     self.cloudy(true);
                     break;
+                  case "light rain":
+                    self.rainy(true);
+                    break;  
                   case "moderate rain":
                     self.rainy(true);
                     break;
