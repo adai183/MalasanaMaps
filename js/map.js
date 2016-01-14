@@ -50,21 +50,68 @@ var place = [
       },
     ];
 
+// constructor for Place objects
 var Place = function(data) {
     this.name = data.name;
     this.lat = data.lat;
     this.lng = data.lng;
     this.description = data.description;
+    this.photoUrl = data.photoUrl;
     this.icon = data.icon;
     this.tag = data.tag;
     this.visible = data.visible;
-    this.photoUrl = data.photoUrl;
 };
+
+// helper variable to heck weather foursquare api call is completed see line 99 
+var c = 0;
+
+// Foursquare API
+var foursquareCall = function(location) {
+        
+
+    $.ajax({
+        type: 'GET',
+        dataType: 'jsonp',
+        data: true,
+        url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' +location.lat+',%20'+location.lng+'%20',
+            success: function(data) { 
+                //console.log("foursquare  ",data);
+                var venues = data.response.venues;
+                for (var i = 0; i < venues.length; i++){
+                    // check wether if there is data on foursquare for this location
+                    if (location.name === venues[i].name){
+                    // get unique venue id
+                        location.foursquareId = venues[i].id;
+                    }
+                }
+            }
+            }).done(function(){
+                $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                data: true,
+                url: 'https://api.foursquare.com/v2/venues/'+location.foursquareId+'/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
+                success: function(data) {  
+                   var item = data.response.photos.items[0];
+                   location.photoUrl = item.prefix + "width300" + item.suffix;
+                   console.log(location.photoUrl);
+                   
+                   //Check weather foursquare api call was successfull for each element in model
+                    c++;
+                    if(c === place.length){
+                        // initialize app 
+                        init();
+                    }
+                }
+            });
+        });   
+    };
+
 
 
 
 // Call instagram api to load external data into place model
-var instagramCall = function(){ 
+var init = function(){ 
             $.ajax({
                 type: 'GET',
                 dataType: 'jsonp',
@@ -100,10 +147,15 @@ var instagramCall = function(){
                     initMap();
                     }
             });
-}();    
+};    
 
 
-
+var updateModel = function(){
+    // this function adds the property photoUrl for the the foursquare image to each element in my place model
+    place.forEach(function(item) {
+            foursquareCall(item);
+        }, this);
+}();
 
 var initMap = function() {
     var ViewModel = function() {
@@ -113,7 +165,6 @@ var initMap = function() {
         this.search = ko.observable('');
         self.showInstList = ko.observable(false);
         self.hideInstList = ko.observable(true);
-        self.photoUrl = ko.observable("https://irs3.4sqi.net/img/general/width300/1GY0S2Z51MV4N1N2PWXWYKPXCLDQTQ4U4MS0RXSK2AC5JX5X.jpg");
         var weather;
         // create observables to controle weather animation
         self.sunny = ko.observable(false);
@@ -125,10 +176,14 @@ var initMap = function() {
         self.stormy = ko.observable(false);
        
 
+
         // Create place object. Push to array.
         place.forEach(function(item) {
             this.placeList.push(new Place(item));
         }, this);
+
+    
+
 
     
         // set first place
@@ -187,11 +242,10 @@ var initMap = function() {
         }
         this.createEventListener = function(location) {
             location.marker.addListener('click', function () {
-                self.foursquareCall(location);
+                //self.foursquareCall(location);
                 toggleBounce(location.marker);
                 self.currentPlace(location);
-                //self.updateContent(location);
-
+                self.updateContent(location);
                 // hide sidebar and weather animation when place gets clicked for better UX
                 hideNavbar();
                 $(".weather").hide();
@@ -206,7 +260,6 @@ var initMap = function() {
                 self.infowindow.open(map, location.marker);
             });
         };
-        
         this.filteredItems = ko.computed(function() {
             var searchTerm = self.search().toLowerCase();
             // is the search term undefined or empty?
@@ -252,8 +305,7 @@ var initMap = function() {
         }
 
         this.infowindow = new google.maps.InfoWindow({
-            maxWidth: 300,
-            content: $(".info-window").prop('outerHTML'),
+            maxWidth: 300
         });
         this.renderMarkers(self.placeList());
 
@@ -370,7 +422,7 @@ var initMap = function() {
 
 
 
-
+/*
     // Foursquare API
     ViewModel.prototype.foursquareCall = function(location) {
         var self = this;
@@ -388,7 +440,6 @@ var initMap = function() {
                         if (location.name === venues[i].name){
                             // get unique venue id
                             location.foursquareId = venues[i].id;
-                            location.photoUrl = "";
                         }
                     }
                 }
@@ -403,32 +454,31 @@ var initMap = function() {
                    location.photoUrl = item.prefix + "width300" + item.suffix;
                    console.log(location.photoUrl);
 
-                   
                 }
             });
         });   
     };
 
+*/
 
 
 
-    /*
     // infowindow content
     ViewModel.prototype.updateContent = function(place) {
-         var html =  '<div id="content">'+
-                  '<div id="siteNotice">'+
-                  '</div>'+
-                  '<h4 id="firstHeading" class="firstHeading">'+
-                  place.name +'</h4>'+
-                  '<div id="bodyContent">'+
-                  '<p>'+ place.description +'</p>'+
-                  '<img src="'+ place.photoUrl+ '">'+
-                  '</div>'+
-                  '</div>';
-                  this.infowindow.setContent(html);
+        var html =  '<div id="content">'+
+      '<div id="siteNotice">'+
+      '</div>'+
+      '<h4 id="firstHeading" class="firstHeading">'+
+      place.name +'</h4>'+
+      '<div id="bodyContent">'+
+      '<p>'+ place.description +'</p>'+
+      '<img src="'+ place.photoUrl+ '">'+
+      '</div>'+
+      '</div>';
+        this.infowindow.setContent(html);
     };
 
- */
+ 
        
     
    
