@@ -15,7 +15,7 @@ var place = [{
     lat: 40.425271,
     lng: -3.702007,
     description: "Mezcal, good Mexican food in a colorful cantina full of Mexican folklore. The owner has good taste in music.",
-    icon: 'img/marker.svg',
+    icon: 'img/drink.png',
     tag: "hardcoded",
     visible: true
 }, {
@@ -23,7 +23,7 @@ var place = [{
     lat: 40.427005,
     lng: -3.709271,
     description: "Good open workplace with creative breakfasts and Scandinavian design furniture",
-    icon: 'img/marker.svg',
+    icon: 'img/laptop.png',
     tag: "hardcoded",
     visible: true
 }, {
@@ -31,7 +31,7 @@ var place = [{
     lat: 40.426464,
     lng: -3.705959,
     description: "Best coffee in town",
-    icon: 'img/marker.svg',
+    icon: 'img/coffee.png',
     tag: "hardcoded",
     visible: true
 }, {
@@ -39,7 +39,7 @@ var place = [{
     lat: 40.422898,
     lng: -3.703014,
     description: "Awesome mediterranean fish restaurant",
-    icon: 'img/marker.svg',
+    icon: 'img/food.png',
     tag: "hardcoded",
     visible: true
 }, ];
@@ -68,6 +68,9 @@ var foursquareCall = function(location) {
         dataType: 'jsonp',
         data: true,
         url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
+        error: function (xhr, ajaxOptions, thrownError) {
+              alert("Foursquare api error: "+ thrownError);
+            },
         success: function(data) {
             //console.log("foursquare  ",data);
             var venues = data.response.venues;
@@ -85,6 +88,9 @@ var foursquareCall = function(location) {
             dataType: 'jsonp',
             data: true,
             url: 'https://api.foursquare.com/v2/venues/' + location.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
+            error: function (xhr, ajaxOptions, thrownError) {
+              alert("Foursquare api error: "+ thrownError);
+            },
             success: function(data) {
                 var item = data.response.photos.items[0];
                 location.photoUrl = item.prefix + "width300" + item.suffix;
@@ -194,10 +200,8 @@ var initMap = function() {
             google.maps.event.trigger(clickedPlace.marker, 'click');
             // hide sidebar and weather animation when place gets clicked for better UX
             hideNavbar();
-            /*
-            $(".weather").hide();
-            $("#weather-button").text("show weather");
-            weatherChecker = false;*/
+            self.weatherChecker(false);
+            self.weatherButton("show weather");
 
         };
         this.renderMarkers = function(arrayInput) {
@@ -243,9 +247,8 @@ var initMap = function() {
                 self.updateContent(location);
                 // hide sidebar and weather animation when place gets clicked for better UX
                 hideNavbar();
-                /*$(".weather").hide();
-                $("#weather-button").text("show weather");
-                weatherChecker = false;*/
+                self.weatherChecker(false);
+                self.weatherButton("show weather");
 
                 // does the infowindow exist?
                 if (self.infowindow) {
@@ -335,7 +338,7 @@ var initMap = function() {
             var malasana = new google.maps.LatLng(40.426394, -3.704878);
             map = new google.maps.Map(document.getElementById('map'), {
                 center: malasana,
-                zoom: 17,
+                zoom: 16,
                 mapTypeControl: false,
                 scrollwheel: false,
                 styles: styleArray,
@@ -427,10 +430,10 @@ var initMap = function() {
         // Toggle functionality for weather button
         self.toggleWeather = function () { 
             self.weatherChecker(!self.weatherChecker());
-            console.log(self.weatherChecker());
+            //console.log(self.weatherChecker());
             
             if (self.weatherChecker()){
-                self.weatherButton("show weather");
+                self.weatherButton("hide weather");
             }else {
                 self.weatherButton("show weather");
             }
