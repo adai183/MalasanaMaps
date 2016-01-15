@@ -20,6 +20,8 @@ None so far.
 
 [Google Maps API](https://developers.google.com/maps/?hl=en)
 
+[Foursquare API](https://developer.foursquare.com/)
+
 [Open Weather Map API](http://openweathermap.org/api)
 
 [Instagram API](https://www.instagram.com/developer/)

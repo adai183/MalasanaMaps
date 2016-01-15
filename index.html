@@ -27,8 +27,6 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]--> 
 
-        <!--  Load and initialize the Facebook SDK -->
-       <script src="js/vendor/facebook.api.js"></script>
             
         <div id="wrapper">
              <!-- Sidebar -->   
@@ -60,19 +58,19 @@
                 
             <!-- Weather Animation -->
             <div class= "weather-container">
-                <!-- ko if: sunny -->
+                <!-- ko if: sunny() && weatherChecker()-->
                 <div class="sunny weather"></div> 
                 <!-- /ko -->
-                <!-- ko if: cloudy -->
+                <!-- ko if: cloudy() && weatherChecker()-->
                 <div class="cloudy weather"></div>
                 <!-- /ko -->
-                <!-- ko if: rainy -->
+                <!-- ko if: rainy() && weatherChecker() -->
                 <div class="rainy weather"></div>
                 <!-- /ko -->
-                <!-- ko if: snowy -->
+                <!-- ko if: snowy() && weatherChecker() -->
                 <div class="snowy weather"></div>
                 <!-- /ko -->
-                <!-- ko if: stormy -->
+                <!-- ko if: stormy() && weatherChecker() -->
                 <div class="stormy weather"></div>
                 <!-- /ko -->
             </div>
@@ -87,8 +85,8 @@
                     <button id="post-button" class="btn btn-success" data-bind="click: $root.toggleInstPosts">
                         show posts
                     </button>
-                    <button id="weather-button" class="btn btn-primary" data-bind="click: $root.toggleWeather">
-                        hide weather
+                    <button id="weather-button" class="btn btn-primary" data-bind="click: $root.toggleWeather, text: weatherButton">
+                        
                     </button>
                 </div>
 

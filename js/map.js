@@ -7,7 +7,7 @@ var place = [{
     lat: 40.426808,
     lng: -3.703256,
     description: "cool clothes and music. If you like garage Rock like Burger records",
-    icon: 'img/marker.svg',
+    icon: 'img/guitar.png',
     tag: "hardcoded",
     visible: true
 }, {
@@ -62,7 +62,7 @@ var c = 0;
 // Foursquare API
 var foursquareCall = function(location) {
 
-
+// load in foursquare api data into model
     $.ajax({
         type: 'GET',
         dataType: 'jsonp',
@@ -102,10 +102,9 @@ var foursquareCall = function(location) {
 };
 
 
-
-
-// Call instagram api to load external data into place model
 var init = function() {
+    
+    // Call instagram api to load external data into place model
     $.ajax({
         type: 'GET',
         dataType: 'jsonp',
@@ -161,6 +160,7 @@ var initMap = function() {
         self.showInstList = ko.observable(false);
         self.hideInstList = ko.observable(true);
         var weather;
+        self.weatherChecker = ko.observable(true);
         // create observables to controle weather animation
         self.sunny = ko.observable(false);
         self.cloudy = ko.observable(false);
@@ -169,7 +169,7 @@ var initMap = function() {
         self.rainbow = ko.observable(false);
         self.starry = ko.observable(false);
         self.stormy = ko.observable(false);
-
+        self.weatherButton = ko.observable('hide weather');
 
 
         // Create place object. Push to array.
@@ -194,9 +194,10 @@ var initMap = function() {
             google.maps.event.trigger(clickedPlace.marker, 'click');
             // hide sidebar and weather animation when place gets clicked for better UX
             hideNavbar();
+            /*
             $(".weather").hide();
             $("#weather-button").text("show weather");
-            weatherChecker = false;
+            weatherChecker = false;*/
 
         };
         this.renderMarkers = function(arrayInput) {
@@ -242,9 +243,9 @@ var initMap = function() {
                 self.updateContent(location);
                 // hide sidebar and weather animation when place gets clicked for better UX
                 hideNavbar();
-                $(".weather").hide();
+                /*$(".weather").hide();
                 $("#weather-button").text("show weather");
-                weatherChecker = false;
+                weatherChecker = false;*/
 
                 // does the infowindow exist?
                 if (self.infowindow) {
@@ -352,15 +353,10 @@ var initMap = function() {
         // API calls
 
         // Logic to hide weather animation or show updated weather animation
-        var weatherChecker = false;
-        self.toggleWeather = function() {
-            if (weatherChecker) {
-                $(".weather").hide();
-                $("#weather-button").text("show weather");
-                weatherChecker = false;
-
-            } else {
+        
+        self.openweatherCall = function() {
                 var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+                
                 // call openweather api
                 $.getJSON(url, function(data) {
                     console.log(data);
@@ -420,16 +416,25 @@ var initMap = function() {
                             console.log("Sorry, " + weather + " does not match any coded weather description.");
                     }
 
-                    $("#weather-button").text("hide weather");
-                    weatherChecker = true;
                 }).fail(function() {
                     alert('Weather API Error');
                 });
-            }
         };
 
         // inicial call to openweather api and set weather animation on map 
-        self.toggleWeather();
+        self.openweatherCall();
+
+        // Toggle functionality for weather button
+        self.toggleWeather = function () { 
+            self.weatherChecker(!self.weatherChecker());
+            console.log(self.weatherChecker());
+            
+            if (self.weatherChecker()){
+                self.weatherButton("show weather");
+            }else {
+                self.weatherButton("show weather");
+            }
+        };
 
         // add functionalty to hide or show instagram posts on sidebar list and on map
         var instPostChecker = true;
