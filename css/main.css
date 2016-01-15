@@ -1,7 +1,7 @@
-html, body {
-    height:100%;
+html,
+body {
+    height: 100%;
 }
-
 #map-container {
     width: 100%;
     height: 100%;
@@ -10,31 +10,24 @@ html, body {
     left: 0;
     z-index: 0;
 }
-
-#map
-{
+#map {
     width: 100%;
     height: 100%;
 }
-
 #search-bar {
     position: relative;
     z-index: 1;
     margin-top: 13%;
 }
-
-#menu-toggle
-{
-	position: absolute;
-	margin-left: 9px;
-	margin-top: 4px;
-	z-index: 10;
+#menu-toggle {
+    position: absolute;
+    margin-left: 9px;
+    margin-top: 4px;
+    z-index: 10;
 }
-
 #menu-toggle.active {
-	margin-left: -30px;
+    margin-left: -30px;
 }
-
 #wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
@@ -42,14 +35,12 @@ html, body {
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-
 #wrapper.toggled {
     padding-left: 250px;
 }
-
 #sidebar-wrapper {
-	background: rgba(0,0,0,0.7);
-	position: absolute;
+    background: rgba(0, 0, 0, 0.7);
+    position: absolute;
     z-index: 10;
     position: fixed;
     top: 0;
@@ -58,28 +49,23 @@ html, body {
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-
 #wrapper.toggled #sidebar-wrapper {
     width: 250px;
 }
-
 #page-content-wrapper {
     width: 100%;
     position: absolute;
     padding: 15px;
 }
-
 #wrapper.toggled #page-content-wrapper {
     position: absolute;
     margin-right: -250px;
 }
-
 /* Sidebar Styles */
 
 .sidebar-nav {
@@ -90,127 +76,119 @@ html, body {
     padding: 0;
     list-style: none;
 }
-
 .sidebar-nav li {
     text-indent: 20px;
     line-height: 40px;
 }
-
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
     color: #999999;
 }
-
 .sidebar-nav li a:hover {
     text-decoration: none;
     color: #fff;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
 }
-
 .sidebar-nav li h3 {
     color: #999999;
 }
-
 .sidebar-nav li a:active,
 .sidebar-nav li a:focus {
     text-decoration: none;
-    margin-left: 100;
+    margin-left: 100px;
 }
-
 .sidebar-nav > .sidebar-brand {
     height: 65px;
     font-size: 18px;
     line-height: 60px;
 }
-
 .sidebar-nav > .sidebar-brand a {
     color: #999999;
 }
-
 .sidebar-nav > .sidebar-brand a:hover {
     color: #fff;
     background: none;
 }
-
 /* Weather */
+
 .weather {
     z-index: 1;
 }
-
 /* Buttons */
+
 #buttons {
     z-index: 10;
     position: absolute;
     display: block;
     margin-left: 5%;
 }
-
 /* Animated Hamburger Icon  */
-#menu-toggle { cursor: pointer; padding: 10px 35px 16px 0px; }
 
-#menu-toggle span, #menu-toggle span:before, #menu-toggle span:after {
-  cursor: pointer;
-  border-radius: 1px;
-  height: 5px;
-  width: 35px;
-  background: black;
-  position: absolute;
-  display: block;
-  content: '';
+#menu-toggle {
+    cursor: pointer;
+    padding: 10px 35px 16px 0px;
 }
-
-#menu-toggle.active span, #menu-toggle.active span:before, #menu-toggle.active span:after{
-	background: #A94442;
-	height: 5px;
-  	width: 25px;
+#menu-toggle span,
+#menu-toggle span:before,
+#menu-toggle span:after {
+    cursor: pointer;
+    border-radius: 1px;
+    height: 5px;
+    width: 35px;
+    background: black;
+    position: absolute;
+    display: block;
+    content: '';
+}
+#menu-toggle.active span,
+#menu-toggle.active span:before,
+#menu-toggle.active span:after {
+    background: #A94442;
+    height: 5px;
+    width: 25px;
 }
 #menu-toggle span:before {
-  top: -10px; 
+    top: -10px;
 }
 #menu-toggle span:after {
-  bottom: -10px;
+    bottom: -10px;
 }
-
-#menu-toggle span, #menu-toggle span:before, #menu-toggle span:after {
-  transition: all 500ms ease-in-out;
+#menu-toggle span,
+#menu-toggle span:before,
+#menu-toggle span:after {
+    transition: all 500ms ease-in-out;
 }
 #menu-toggle.active span {
-  background-color: transparent;
+    background-color: transparent;
 }
-#menu-toggle.active span:before, #menu-toggle.active span:after {
-  top: 0;
+#menu-toggle.active span:before,
+#menu-toggle.active span:after {
+    top: 0;
 }
 #menu-toggle.active span:before {
-  transform: rotate(45deg);
+    transform: rotate(45deg);
 }
 #menu-toggle.active span:after {
-  transform: rotate(-45deg);
+    transform: rotate(-45deg);
 }
-
-
 @media(min-width:320px) {
     #wrapper {
         padding-left: 250px;
     }
-
     #wrapper.toggled {
         padding-left: 0;
     }
-
     #sidebar-wrapper {
         width: 250px;
     }
-
     #wrapper.toggled #sidebar-wrapper {
         width: 0;
     }
-
     #page-content-wrapper {
         padding: 20px;
         position: relative;
     }
-
     #wrapper.toggled #page-content-wrapper {
         position: relative;
         margin-right: 0;
