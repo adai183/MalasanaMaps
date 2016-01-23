@@ -56,61 +56,10 @@ var Place = function(data) {
     this.visible = data.visible;
 };
 
-// helper variable to heck weather foursquare api call is completed see line 99 
-var c = 0;
 
-// Foursquare API
-var foursquareCall = function(location) {
-
-// load in foursquare api data into model
-    $.ajax({
-        type: 'GET',
-        dataType: 'jsonp',
-        data: true,
-        url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
-        error: function (xhr, ajaxOptions, thrownError) {
-              alert("Foursquare api error: "+ thrownError);
-            },
-        success: function(data) {
-            //console.log("foursquare  ",data);
-            var venues = data.response.venues;
-            for (var i = 0; i < venues.length; i++) {
-                // check wether if there is data on foursquare for this location
-                if (location.name === venues[i].name) {
-                    // get unique venue id
-                    location.foursquareId = venues[i].id;
-                }
-            }
-        }
-    }).done(function() {
-        $.ajax({
-            type: 'GET',
-            dataType: 'jsonp',
-            data: true,
-            url: 'https://api.foursquare.com/v2/venues/' + location.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
-            error: function (xhr, ajaxOptions, thrownError) {
-              alert("Foursquare api error: "+ thrownError);
-            },
-            success: function(data) {
-                var item = data.response.photos.items[0];
-                location.photoUrl = item.prefix + "width300" + item.suffix;
-                console.log(location.photoUrl);
-
-                //Check weather foursquare api call was successfull for each element in model
-                c++;
-                if (c === place.length) {
-                    // initialize app 
-                    init();
-                }
-            }
-        });
-    });
-};
-
-
-var init = function() {
-    
-    // Call instagram api to load external data into place model
+// Call instagram api to load external data into place model
+// initialise map when finished on line 96
+var instagramCall = function() {
     $.ajax({
         type: 'GET',
         dataType: 'jsonp',
@@ -142,20 +91,16 @@ var init = function() {
                 place.push(instlocation);
             }
             // clear fallback timeout when instagram api successfull
+            // look at line to see error 484 handling
             clearTimeout(fallback);
             // initialize map after data has been added to place model
             initMap();
         }
     });
-};
-
-
-var updateModel = function() {
-    // this function adds the property photoUrl for the the foursquare image to each element in my place model
-    place.forEach(function(item) {
-        foursquareCall(item);
-    }, this);
 }();
+
+
+
 
 var initMap = function() {
     var ViewModel = function() {
@@ -239,9 +184,50 @@ var initMap = function() {
                 myMarker.setAnimation(null);
             }, 2500);
         }
+
+        // Foursquare API
+        self.foursquareCall = function(location) {
+
+            // load in foursquare api data into model
+            $.ajax({
+            dataType: 'jsonp',
+            data: true,
+            url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
+            success: function(data) {
+                //console.log("foursquare  ",data);
+                var venues = data.response.venues;
+                for (var i = 0; i < venues.length; i++) {
+                    // check wether if there is data on foursquare for this location
+                    if (location.name === venues[i].name) {
+                        // get unique venue id
+                        location.foursquareId = venues[i].id;
+                    }
+                }
+            }
+            }).error(function(e){
+                console.log("error");
+            }).done(function() {
+                $.ajax({
+                    dataType: 'jsonp',
+                    data: true,
+                    url: 'https://api.foursquare.com/v2/venues/' + location.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
+                    success: function(data) {
+                        var item = data.response.photos.items[0];
+                        location.photoUrl = item.prefix + "width300" + item.suffix;
+                        console.log(location.photoUrl);
+                        $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:300px; height: 300px;" src="' + location.photoUrl + '">');
+                    }
+                });
+            }).error(function(e){
+                $("#photo-container").append("Sorry, but can´t retrieve data from foursquare api");
+            });
+        };
+
+
+
         this.createEventListener = function(location) {
             location.marker.addListener('click', function() {
-                //self.foursquareCall(location);
+                self.foursquareCall(location);
                 toggleBounce(location.marker);
                 self.currentPlace(location);
                 self.updateContent(location);
@@ -483,7 +469,7 @@ var initMap = function() {
             place.name + '</h4>' +
             '<div id="bodyContent">' +
             '<p>' + place.description + '</p>' +
-            '<img class="img-responsive" style="width:300px; height: 300px;" src="' + place.photoUrl + '">' +
+            '<div id="photo-container"></div>' +
             '</div>' +
             '</div>';
 
