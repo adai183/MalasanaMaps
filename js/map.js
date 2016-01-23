@@ -193,8 +193,9 @@ var initMap = function() {
             dataType: 'jsonp',
             data: true,
             url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
-            success: function(data) {
-                //console.log("foursquare  ",data);
+            })
+            .done(function(data) {
+                
                 var venues = data.response.venues;
                 for (var i = 0; i < venues.length; i++) {
                     // check wether if there is data on foursquare for this location
@@ -203,23 +204,23 @@ var initMap = function() {
                         location.foursquareId = venues[i].id;
                     }
                 }
-            }
-            }).error(function(e){
-                console.log("error");
-            }).done(function() {
                 $.ajax({
                     dataType: 'jsonp',
                     data: true,
                     url: 'https://api.foursquare.com/v2/venues/' + location.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
-                    success: function(data) {
-                        var item = data.response.photos.items[0];
-                        location.photoUrl = item.prefix + "width300" + item.suffix;
-                        console.log(location.photoUrl);
-                        $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:300px; height: 300px;" src="' + location.photoUrl + '">');
-                    }
-                });
-            }).error(function(e){
-                $("#photo-container").append("Sorry, but can´t retrieve data from foursquare api");
+                })
+                .done(function(data) {
+                    var item = data.response.photos.items[0];
+                    location.photoUrl = item.prefix + "width300" + item.suffix;
+                    console.log(location.photoUrl);
+                    $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:300px; height: 300px;" src="' + location.photoUrl + '">');
+                })
+                .fail(function() {
+                    console.log("error");
+            });
+            })
+            .fail(function() {
+                    console.log("error");
             });
         };
 

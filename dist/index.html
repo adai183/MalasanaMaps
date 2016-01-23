@@ -5,22 +5,14 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>Malasaña Maps</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/bootstrap.min.css">
-        
-        
         <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" type="text/css" href="css/weather_icon.css">
-        <script src="js/vendor/jquery-1.11.2.min.js"></script>
-        <script src="js/vendor/bootstrap.min.js"></script>
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        
+        <link rel="stylesheet" href="css/weather_icon.css">
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -37,6 +29,14 @@
                         <input type="text" class="form-control" data-bind="value: search, valueUpdate: 'afterkeydown'" placeholder="Search">
                     </div>
                  </form>
+                 <!-- Buttons -->
+                <div id="buttons">
+                    <button id="post-button" class="btn btn-success" data-bind="click: $root.toggleInstPosts">
+                        show posts
+                    </button>
+                    <button id="weather-button" class="btn btn-primary" data-bind="click: $root.toggleWeather, text: weatherButton">     
+                    </button>
+                </div>
                 <!--Elements-->   
                 <ul class="sidebar-nav">
                     <li>
@@ -79,22 +79,13 @@
                 <div id="map"></div>
             </div>      
                 <a href="#menu-toggle" id="menu-toggle" class="active" ><span></span></a> 
-
-                <!-- Buttons -->
-                <div id="buttons">
-                    <button id="post-button" class="btn btn-success" data-bind="click: $root.toggleInstPosts">
-                        show posts
-                    </button>
-                    <button id="weather-button" class="btn btn-primary" data-bind="click: $root.toggleWeather, text: weatherButton">
-                        
-                    </button>
-                </div>
-
         </div> 
         <!-- End content -->
         
         <!-- JS Imports -->
-
+        <script src="js/vendor/jquery-1.11.2.min.js"></script>
+        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
         <script src="js/vendor/knockout-3.2.0.js"></script>        
         <script src="https://maps.googleapis.com/maps/api/js?libraries=places" async defer></script>
         
