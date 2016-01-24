@@ -190,7 +190,8 @@ var initMap = function() {
 
             // load in foursquare api data into model
             $.ajax({
-            dataType: 'jsonp',
+            dataType: 'json',
+            async: true,
             data: true,
             url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
             })
@@ -205,7 +206,8 @@ var initMap = function() {
                     }
                 }
                 $.ajax({
-                    dataType: 'jsonp',
+                    dataType: 'json',
+                    async: true,
                     data: true,
                     url: 'https://api.foursquare.com/v2/venues/' + location.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
                 })
@@ -216,11 +218,11 @@ var initMap = function() {
                     $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:300px; height: 300px;" src="' + location.photoUrl + '">');
                 })
                 .fail(function() {
-                    console.log("error");
+                    alert("Sorry. Failed to load data from foursquare api");
             });
             })
             .fail(function() {
-                    console.log("error");
+                    alert("Sorry. Failed to load data from foursquare api");
             });
         };
 
