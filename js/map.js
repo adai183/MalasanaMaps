@@ -31,7 +31,7 @@ var place = [{
     lat: 40.426464,
     lng: -3.705959,
     description: "Best coffee in town",
-    icon: 'img/coffee.png',
+    icon: 'img/coffee.svg',
     tag: "hardcoded",
     visible: true
 }, {
@@ -322,7 +322,7 @@ var initMap = function() {
             }]
         }];
 
-        if (map = true) {
+        if ((typeof google !== 'undefined')) {
             // This next line makes `malasana` a new Google Map JavaScript Object
             var malasana = new google.maps.LatLng(40.426394, -3.704878);
             map = new google.maps.Map(document.getElementById('map'), {
