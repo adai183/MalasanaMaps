@@ -247,6 +247,7 @@ var initMap = function() {
                 self.infowindow.open(map, location.marker);
             });
         };
+        
         this.filteredItems = ko.computed(function() {
             var searchTerm = self.search().toLowerCase();
             // is the search term undefined or empty?
@@ -351,7 +352,7 @@ var initMap = function() {
                 
                 // call openweather api
                 $.getJSON(url, function(data) {
-                    console.log(data);
+                    console.log(data.weather[0].description);
                     weather = data.weather[0].description;
                     // set weather animation on map
                     switch (weather) {
@@ -415,6 +416,12 @@ var initMap = function() {
 
         // inicial call to openweather api and set weather animation on map 
         self.openweatherCall();
+
+         // update weather when the user changes map center
+         map.addListener('center_changed', function() {
+          //self.openweatherCall(); 
+          console.log(map.getCenter());
+         });
 
         // Toggle functionality for weather button
         self.toggleWeather = function () { 
