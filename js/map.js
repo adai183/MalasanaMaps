@@ -65,9 +65,9 @@ var instagramCall = function() {
         dataType: 'jsonp',
         data: true,
         url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f',
-        success: function(data) {
-            window.clearTimeout(i);
-            console.log("instagram ", data);
+    })
+    .done(function(data) {
+        console.log("instagram ", data);
             // add external data to place model
             for (var i = 0; i < data.data.length; i++) {
                 var location = data.data[i].location;
@@ -90,16 +90,15 @@ var instagramCall = function() {
                 };
                 place.push(instlocation);
             }
-            // clear fallback timeout when instagram api successfull
-            // look at line to see error 484 handling
-            clearTimeout(fallback);
-            // initialize map after data has been added to place model
-            initMap();
-        }
+    })
+    .fail (function() {
+        alert("Sorry, failed to load data from instagram api");
+    })
+    .always (function() {
+        // initialize app
+        initMap();               
     });
 }();
-
-
 
 
 var initMap = function() {
@@ -203,28 +202,35 @@ var initMap = function() {
                     if (location.name === venues[i].name) {
                         // get unique venue id
                         location.foursquareId = venues[i].id;
+                        self.foursquarePhotos(location); //GET PHOTOS HERE -- ONLY IF HAVE ID
                     }
                 }
-                $.ajax({
-                    dataType: 'json',
-                    async: true,
-                    data: true,
-                    url: 'https://api.foursquare.com/v2/venues/' + location.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
-                })
-                .done(function(data) {
-                    var item = data.response.photos.items[0];
-                    location.photoUrl = item.prefix + "width300" + item.suffix;
-                    console.log(location.photoUrl);
-                    $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:300px; height: 300px;" src="' + location.photoUrl + '">');
-                })
-                .fail(function() {
-                    alert("Sorry. Failed to load data from foursquare api");
-            });
             })
             .fail(function() {
                     alert("Sorry. Failed to load data from foursquare api");
             });
         };
+
+
+
+        //SEPARATE FUNCTION TO GET PHOTOS FROM FOURSQUARE
+        self.foursquarePhotos = function(place) {
+            $.ajax({
+                dataType: 'json',
+                async: true,
+                data: true,
+                url: 'https://api.foursquare.com/v2/venues/' + place.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
+            })
+            .done(function(data) {
+                var item = data.response.photos.items[0];
+                place.photoUrl = item.prefix + "width300" + item.suffix;
+                console.log(place.photoUrl);
+                $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:300px; height: 300px;" src="' + place.photoUrl + '">');
+            })
+            .fail(function() {
+                alert("Sorry. Failed to load photos from foursquare api");
+            });
+        };  
 
 
 
@@ -505,9 +511,3 @@ var initMap = function() {
 
     ko.applyBindings(new ViewModel());
 };
-
-// set fallback to make sure app loads even when instagram api fails
-var fallback = setTimeout(function() {
-    initMap();
-    alert("Failed to get data from Instagram API");
-}, 8000);
