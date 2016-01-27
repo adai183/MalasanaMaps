@@ -61,13 +61,13 @@ var Place = function(data) {
 // initialise map when finished on line 96
 var instagramCall = function() {
     $.ajax({
-        type: 'GET',
-        dataType: 'jsonp',
-        data: true,
-        url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f',
-    })
-    .done(function(data) {
-        console.log("instagram ", data);
+            type: 'GET',
+            dataType: 'jsonp',
+            data: true,
+            url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=460702240.2045934.b1d27f475b81420ea53c8671507c7b3f',
+        })
+        .done(function(data) {
+            console.log("instagram ", data);
             // add external data to place model
             for (var i = 0; i < data.data.length; i++) {
                 var location = data.data[i].location;
@@ -90,14 +90,14 @@ var instagramCall = function() {
                 };
                 place.push(instlocation);
             }
-    })
-    .fail (function() {
-        alert("Sorry, failed to load data from instagram api");
-    })
-    .always (function() {
-        // initialize app
-        initMap();               
-    });
+        })
+        .fail(function() {
+            alert("Sorry, failed to load data from instagram api");
+        })
+        .always(function() {
+            // initialize app
+            initMap();
+        });
 }();
 
 
@@ -189,26 +189,26 @@ var initMap = function() {
 
             // load in foursquare api data into model
             $.ajax({
-            dataType: 'json',
-            async: true,
-            data: true,
-            url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
-            })
-            .done(function(data) {
-                
-                var venues = data.response.venues;
-                for (var i = 0; i < venues.length; i++) {
-                    // check wether if there is data on foursquare for this location
-                    if (location.name === venues[i].name) {
-                        // get unique venue id
-                        location.foursquareId = venues[i].id;
-                        self.foursquarePhotos(location); //GET PHOTOS HERE -- ONLY IF HAVE ID
+                    dataType: 'json',
+                    async: true,
+                    data: true,
+                    url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
+                })
+                .done(function(data) {
+
+                    var venues = data.response.venues;
+                    for (var i = 0; i < venues.length; i++) {
+                        // check wether if there is data on foursquare for this location
+                        if (location.name === venues[i].name) {
+                            // get unique venue id
+                            location.foursquareId = venues[i].id;
+                            self.foursquarePhotos(location); //GET PHOTOS HERE -- ONLY IF HAVE ID
+                        }
                     }
-                }
-            })
-            .fail(function() {
+                })
+                .fail(function() {
                     alert("Sorry. Failed to load data from foursquare api");
-            });
+                });
         };
 
 
@@ -216,21 +216,21 @@ var initMap = function() {
         //SEPARATE FUNCTION TO GET PHOTOS FROM FOURSQUARE
         self.foursquarePhotos = function(place) {
             $.ajax({
-                dataType: 'json',
-                async: true,
-                data: true,
-                url: 'https://api.foursquare.com/v2/venues/' + place.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
-            })
-            .done(function(data) {
-                var item = data.response.photos.items[0];
-                place.photoUrl = item.prefix + "width300" + item.suffix;
-                console.log(place.photoUrl);
-                $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:150px; height: 150px;" src="' + place.photoUrl + '">');
-            })
-            .fail(function() {
-                alert("Sorry. Failed to load photos from foursquare api");
-            });
-        };  
+                    dataType: 'json',
+                    async: true,
+                    data: true,
+                    url: 'https://api.foursquare.com/v2/venues/' + place.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
+                })
+                .done(function(data) {
+                    var item = data.response.photos.items[0];
+                    place.photoUrl = item.prefix + "width300" + item.suffix;
+                    console.log(place.photoUrl);
+                    $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:150px; height: 150px;" src="' + place.photoUrl + '">');
+                })
+                .fail(function() {
+                    alert("Sorry. Failed to load photos from foursquare api");
+                });
+        };
 
 
 
@@ -255,7 +255,7 @@ var initMap = function() {
                 self.infowindow.open(map, location.marker);
             });
         };
-        
+
         this.filteredItems = ko.computed(function() {
             var searchTerm = self.search().toLowerCase();
             // is the search term undefined or empty?
@@ -354,108 +354,108 @@ var initMap = function() {
         // API calls
 
         // Logic to hide weather animation or show updated weather animation
-        
-        self.openweatherCall = function(lat, lng) {
-                var url = "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lng+"&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
-                
-                // call openweather api
-                $.getJSON(url, function(data) {
-                    var weather = data.weather[0].description;
-                     console.log("weather: ", weather);
-                     self.sunny(false);
-                     self.cloudy(false);
-                     self.rainy(false);
-                     self.snowy(false);
-                     self.stormy(false);
-                    // set weather animation on map
-                    switch (weather) {
-                        case "Sky is Clear":
-                            self.sunny(true);
-                            break;
-                        case "few clouds":
-                            self.sunny(true);
-                            self.cloudy(true);
-                            break;
-                        case "scattered clouds":
-                            self.sunny(true);
-                            self.cloudy(true);
-                            break;
-                        case "broken clouds":
-                            self.sunny(true);
-                            self.cloudy(true);
-                            break;
-                        case "overcast clouds":
-                            self.cloudy(true);
-                            break;
-                        case "fog":
-                            self.cloudy(true);
-                            break;
-                        case "light intensity drizzle":
-                            self.cloudy(true);
-                            break;
-                        case "drizzle":
-                            self.cloudy(true);
-                            break;
-                        case "light intensity drizzle":
-                            self.cloudy(true);
-                            break;
-                        case "light rain":
-                            self.rainy(true);
-                            break;
-                        case "moderate rain":
-                            self.rainy(true);
-                            break;
-                        case "rain":
-                            self.cloudy(true);
-                            self.rainy(true);
-                            break;
-                        case "Thunderstorm":
-                            self.cloudy(true);
-                            self.rainy(true);
-                            self.stormy(true);
-                            break;
-                        case "snow":
-                            self.cloudy(true);
-                            self.snowy(true);
-                            break;
-                        case "mist":
-                            self.cloudy(true);
-                            break;
-                        default:
-                            console.log("Sorry, " + weather + " does not match any coded weather description.");
-                    }
 
-                }).fail(function() {
-                    alert('Weather API Error');
-                });
+        self.openweatherCall = function(lat, lng) {
+            var url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+
+            // call openweather api
+            $.getJSON(url, function(data) {
+                var weather = data.weather[0].description;
+                console.log("weather: ", weather);
+                self.sunny(false);
+                self.cloudy(false);
+                self.rainy(false);
+                self.snowy(false);
+                self.stormy(false);
+                // set weather animation on map
+                switch (weather) {
+                    case "Sky is Clear":
+                        self.sunny(true);
+                        break;
+                    case "few clouds":
+                        self.sunny(true);
+                        self.cloudy(true);
+                        break;
+                    case "scattered clouds":
+                        self.sunny(true);
+                        self.cloudy(true);
+                        break;
+                    case "broken clouds":
+                        self.sunny(true);
+                        self.cloudy(true);
+                        break;
+                    case "overcast clouds":
+                        self.cloudy(true);
+                        break;
+                    case "fog":
+                        self.cloudy(true);
+                        break;
+                    case "light intensity drizzle":
+                        self.cloudy(true);
+                        break;
+                    case "drizzle":
+                        self.cloudy(true);
+                        break;
+                    case "light intensity drizzle":
+                        self.cloudy(true);
+                        break;
+                    case "light rain":
+                        self.rainy(true);
+                        break;
+                    case "moderate rain":
+                        self.rainy(true);
+                        break;
+                    case "rain":
+                        self.cloudy(true);
+                        self.rainy(true);
+                        break;
+                    case "Thunderstorm":
+                        self.cloudy(true);
+                        self.rainy(true);
+                        self.stormy(true);
+                        break;
+                    case "snow":
+                        self.cloudy(true);
+                        self.snowy(true);
+                        break;
+                    case "mist":
+                        self.cloudy(true);
+                        break;
+                    default:
+                        console.log("Sorry, " + weather + " does not match any coded weather description.");
+                }
+
+            }).fail(function() {
+                alert('Weather API Error');
+            });
         };
 
         // inicial call to openweather api and set weather animation on map 
         self.openweatherCall(40.426394, -3.704878);
 
-         // update weather when the user changes map center
-         map.addListener('center_changed', function() { 
+        // update weather when the user changes map center
+        map.addListener('center_changed', function() {
             var lat,
                 lng;
             // use setTimeout to avoid unnecessary api calls
-            setTimeout(function(){
-            lat = map.getCenter().lat();
-            lng = map.getCenter().lng();
-            self.openweatherCall(lat, lng);
-            },250);
-         });
+            setTimeout(function() {
+                lat = map.getCenter().lat();
+                lng = map.getCenter().lng();
+                self.openweatherCall(lat, lng);
+            }, 250);
+        });
 
         // Toggle functionality for weather button
-        self.toggleWeather = function () { 
+        self.toggleWeather = function() {
             self.weatherChecker(!self.weatherChecker());
             //console.log(self.weatherChecker());
-            
-            if (self.weatherChecker()){
+
+            if (self.weatherChecker()) {
                 self.weatherButton("hide weather");
                 // close sidebar for better UX
                 $("#wrapper").toggleClass("toggled");
                 $("#menu-toggle").toggleClass("active");
-            }else {
+            } else {
                 self.weatherButton("show weather");
             }
         };
