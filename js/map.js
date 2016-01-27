@@ -83,7 +83,7 @@ var instagramCall = function() {
                     lat: location.latitude,
                     lng: location.longitude,
                     icon: "img/instagram-icon.svg",
-                    description: "latest instagram post:<br>" + comment,
+                    description: "latest instagram post:<br>" + comment + '<img class="instagramPhoto img-responsive" style="width:150px; height: 150px; margin-top: 2%;" src="' + data.data[i].images.standard_resolution.url + '">',
                     photoUrl: data.data[i].images.standard_resolution.url,
                     tag: "instagram",
                     visible: false
@@ -225,7 +225,7 @@ var initMap = function() {
                 var item = data.response.photos.items[0];
                 place.photoUrl = item.prefix + "width300" + item.suffix;
                 console.log(place.photoUrl);
-                $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:300px; height: 300px;" src="' + place.photoUrl + '">');
+                $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:150px; height: 150px;" src="' + place.photoUrl + '">');
             })
             .fail(function() {
                 alert("Sorry. Failed to load photos from foursquare api");
@@ -244,6 +244,8 @@ var initMap = function() {
                 hideNavbar();
                 self.weatherChecker(false);
                 self.weatherButton("show weather");
+                // recenter map for better UX
+                map.setCenter(location.marker.getPosition());
 
                 // does the infowindow exist?
                 if (self.infowindow) {
@@ -345,7 +347,7 @@ var initMap = function() {
         }
 
         this.infowindow = new google.maps.InfoWindow({
-            maxWidth: 300
+            maxWidth: 150
         });
         this.renderMarkers(self.placeList());
 
@@ -450,6 +452,9 @@ var initMap = function() {
             
             if (self.weatherChecker()){
                 self.weatherButton("hide weather");
+                // close sidebar for better UX
+                $("#wrapper").toggleClass("toggled");
+                $("#menu-toggle").toggleClass("active");
             }else {
                 self.weatherButton("show weather");
             }
