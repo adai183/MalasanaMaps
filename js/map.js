@@ -347,13 +347,18 @@ var initMap = function() {
 
         // Logic to hide weather animation or show updated weather animation
         
-        self.openweatherCall = function() {
-                var url = "http://api.openweathermap.org/data/2.5/weather?lat=40.424430&lon=-3.701449&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+        self.openweatherCall = function(lat, lng) {
+                var url = "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lng+"&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
                 
                 // call openweather api
                 $.getJSON(url, function(data) {
-                    console.log(data.weather[0].description);
-                    weather = data.weather[0].description;
+                    var weather = data.weather[0].description;
+                     console.log("weather: ", weather);
+                     self.sunny(false);
+                     self.cloudy(false);
+                     self.rainy(false);
+                     self.snowy(false);
+                     self.stormy(false);
                     // set weather animation on map
                     switch (weather) {
                         case "Sky is Clear":
@@ -372,6 +377,9 @@ var initMap = function() {
                             self.cloudy(true);
                             break;
                         case "overcast clouds":
+                            self.cloudy(true);
+                            break;
+                        case "fog":
                             self.cloudy(true);
                             break;
                         case "light intensity drizzle":
@@ -415,12 +423,19 @@ var initMap = function() {
         };
 
         // inicial call to openweather api and set weather animation on map 
-        self.openweatherCall();
+        self.openweatherCall(40.426394, -3.704878);
 
          // update weather when the user changes map center
-         map.addListener('center_changed', function() {
-          //self.openweatherCall(); 
-          console.log(map.getCenter());
+         var scrollcount = 0; // helper var to meassure how much the user has scrolled to avoid unnecessary api calls
+         map.addListener('center_changed', function() { 
+            this.lat = map.getCenter().lat();
+            this.lng = map.getCenter().lng();
+            scrollcount++;
+            // call openweather api when user has scrolled far enough
+            if (scrollcount === 50){
+                self.openweatherCall(this.lat, this.lng);
+                scrollcount = 0;
+            }  
          });
 
         // Toggle functionality for weather button
