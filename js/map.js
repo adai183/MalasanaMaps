@@ -426,16 +426,13 @@ var initMap = function() {
         self.openweatherCall(40.426394, -3.704878);
 
          // update weather when the user changes map center
-         var scrollcount = 0; // helper var to meassure how much the user has scrolled to avoid unnecessary api calls
          map.addListener('center_changed', function() { 
-            this.lat = map.getCenter().lat();
-            this.lng = map.getCenter().lng();
-            scrollcount++;
-            // call openweather api when user has scrolled far enough
-            if (scrollcount === 50){
-                self.openweatherCall(this.lat, this.lng);
-                scrollcount = 0;
-            }  
+            // use setTimeout to avoid unnecessary api calls
+            setTimeout(function(){
+            var lat = map.getCenter().lat();
+            var lng = map.getCenter().lng();
+            self.openweatherCall(lat, lng);
+            },250);
          });
 
         // Toggle functionality for weather button
