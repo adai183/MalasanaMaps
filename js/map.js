@@ -427,10 +427,12 @@ var initMap = function() {
 
          // update weather when the user changes map center
          map.addListener('center_changed', function() { 
+            var lat,
+                lng;
             // use setTimeout to avoid unnecessary api calls
             setTimeout(function(){
-            var lat = map.getCenter().lat();
-            var lng = map.getCenter().lng();
+            lat = map.getCenter().lat();
+            lng = map.getCenter().lng();
             self.openweatherCall(lat, lng);
             },250);
          });
