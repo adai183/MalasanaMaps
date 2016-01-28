@@ -362,6 +362,7 @@ var initMap = function() {
             $.getJSON(url, function(data) {
                 var weather = data.weather[0].description;
                 console.log("weather: ", weather);
+                $(".weather-container").show();
                 self.sunny(false);
                 self.cloudy(false);
                 self.rainy(false);
