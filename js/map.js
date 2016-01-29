@@ -83,7 +83,7 @@ var instagramCall = function() {
                     lat: location.latitude,
                     lng: location.longitude,
                     icon: "img/instagram-icon.svg",
-                    description: "latest instagram post:<br>" + comment + '<img class="instagramPhoto img-responsive" style="width:150px; height: 150px; margin-top: 2%;" src="' + data.data[i].images.standard_resolution.url + '">',
+                    description: "latest instagram post:" + comment,
                     photoUrl: data.data[i].images.standard_resolution.url,
                     tag: "instagram",
                     visible: false
@@ -101,8 +101,9 @@ var instagramCall = function() {
         });
 }();
 
-// Google Maps API
+
 var initMap = function() {
+ // Google Maps
     var styleArray = [{
         "featureType": "landscape.fill",
         "elementType": "geometry.fill",
@@ -150,7 +151,7 @@ var initMap = function() {
             "color": "#7dcdcd"
         }]
     }];
-    // check if google is defined for error handling
+
     if ((typeof google !== 'undefined')) {
         // This next line makes `malasana` a new Google Map JavaScript Object
         var malasana = new google.maps.LatLng(40.426394, -3.704878);
@@ -163,11 +164,13 @@ var initMap = function() {
             styles: styleArray,
             streetViewControl: false
         });
+        infowindow = new google.maps.InfoWindow({
+        maxWidth: 150
+        });
     } else {
         alert('Google Maps Error');
     }
 };
-
 
 var ViewModel = function() {
     var self = this;
@@ -176,7 +179,10 @@ var ViewModel = function() {
     this.search = ko.observable('');
     self.showInstList = ko.observable(false);
     self.hideInstList = ko.observable(true);
-    self.currentPhotoUrl = ko.observable('');
+    self.currentPlaceName = ko.observable('');
+    self.currentPlaceDescription = ko.observable('');
+    self.currentPlacePhotoUrl = ko.observable('');
+    var weather;
     self.weatherChecker = ko.observable(true);
     // create observables to controle weather animation
     self.sunny = ko.observable(false);
@@ -253,8 +259,8 @@ var ViewModel = function() {
 
     // Foursquare API
     self.foursquareCall = function(location) {
-    // load in foursquare api data into model
-        // get all data for neighborhood
+
+        // load in foursquare api data into model
         $.ajax({
                 dataType: 'json',
                 async: true,
@@ -265,7 +271,7 @@ var ViewModel = function() {
 
                 var venues = data.response.venues;
                 for (var i = 0; i < venues.length; i++) {
-                    // check wether there is data on foursquare for this location
+                    // check wether if there is data on foursquare for this location
                     if (location.name === venues[i].name) {
                         // get unique venue id
                         location.foursquareId = venues[i].id;
@@ -282,7 +288,6 @@ var ViewModel = function() {
 
     //SEPARATE FUNCTION TO GET PHOTOS FROM FOURSQUARE
     self.foursquarePhotos = function(place) {
-        // call foursquare again to get photos for specific venues
         $.ajax({
                 dataType: 'json',
                 async: true,
@@ -290,26 +295,45 @@ var ViewModel = function() {
                 url: 'https://api.foursquare.com/v2/venues/' + place.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
             })
             .done(function(data) {
-                // add photo url to infowindow
                 var item = data.response.photos.items[0];
-                place.photoUrl = item.prefix + "width300" + item.suffix;
-                self.currentPhotoUrl(place.photoUrl);
-                console.log(place.photoUrl);
-                $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:150px; height: 150px;" src="' + place.photoUrl + '">');
+                place.photoUrl =item.prefix + "width300" + item.suffix;
+                // see data-binding for img in phot-container in index.html
+                self.currentPlacePhotoUrl(place.photoUrl);
+                console.log("from fousquare call: ",place.photoUrl);
+                //$("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:150px; height: 150px;" src="' + place.photoUrl + '">');
             })
             .fail(function() {
                 alert("Sorry. Failed to load photos from foursquare api");
             });
     };
 
+    /* 
+    Workaround to handle unexpected bahaviour of data-bindings inside infowindows.
+    Seems I have to activate all bindings "silently" to make them work. If 
+    */
+    /*
+    self.foursquareCall(this.placeList()[0]);
+    self.currentPlaceName(this.placeList()[0].name);
+    self.currentPlaceDescription(this.placeList()[0].description);
+    */
 
 
     this.createEventListener = function(location) {
         location.marker.addListener('click', function() {
-            self.foursquareCall(location);
+            console.log(location.tag);
+            // handle click event if location is coming from instagram
+            self.updateContent(location);
             toggleBounce(location.marker);
             self.currentPlace(location);
-            self.updateContent(location);
+            self.currentPlaceName(location.name);
+            self.currentPlaceDescription(location.description);
+            if (location.tag === "instagram"){ 
+                self.currentPlacePhotoUrl(location.photoUrl);
+            }else if (location.tag === "hardcoded") {
+                self.foursquareCall(location);    
+            }
+            
+            //console.log("photoUrl: ", location.photoUrl);
             // hide sidebar and weather animation when place gets clicked for better UX
             hideNavbar();
             self.weatherChecker(false);
@@ -317,13 +341,13 @@ var ViewModel = function() {
             // recenter map for better UX
             map.setCenter(location.marker.getPosition());
             map.panBy(0,-200);
-            console.log(location);
+
             // does the infowindow exist?
-            if (self.infowindow) {
-                self.infowindow.close(); // close the infowindow
+            if (infowindow) {
+                infowindow.close(); // close the infowindow
             }
             // open the infowindow with this map marker location
-            self.infowindow.open(map, location.marker);
+            infowindow.open(map, location.marker);
         });
     };
 
@@ -355,15 +379,15 @@ var ViewModel = function() {
     });
    
     this.renderMarkers(self.placeList());
-
-    // instantiate infowindow object
+    /*
     this.infowindow = new google.maps.InfoWindow({
         maxWidth: 150
-    });
+    });*/
 
     // API calls
 
     // Logic to hide weather animation or show updated weather animation
+
     self.openweatherCall = function(lat, lng) {
         var url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
 
@@ -507,17 +531,5 @@ var ViewModel = function() {
 
 // infowindow content
 ViewModel.prototype.updateContent = function(place) {
-    var html = '<div id="content">' +
-        '<div id="siteNotice">' +
-        '</div>' +
-        '<h4 id="firstHeading" class="firstHeading">' +
-        place.name + '</h4>' +
-        '<div id="bodyContent">' +
-        '<p>' + place.description + '</p>' +
-        '<div id="photo-container">'+
-        self.currentPhotoUrl + '</div>' +
-        '</div>' +
-        '</div>';
-
-    this.infowindow.setContent(html);
+    infowindow.setContent($('.infowindow-template').html());
 };

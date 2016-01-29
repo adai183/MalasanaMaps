@@ -80,6 +80,19 @@
             </div>      
                 <a href="#menu-toggle" id="menu-toggle" class="active" ><span></span></a> 
         </div> 
+
+        <!--info wondow template-->
+        <div id="content" class="infowindow-template">
+            <div id="siteNotice">
+            </div>
+            <h4 id="firstHeading" class="firstHeading" data-bind="text: currentPlaceName"></h4>
+            <div id="bodyContent">
+                <p data-bind="text: currentPlaceDescription"></p>
+                <div id="photo-container">
+                    <img class="img-responsive" data-bind="attr:{src: currentPlacePhotoUrl}"style="width:150px; height: 150px;">
+                </div>
+            </div> 
+        </div>
         <!-- End content -->
         
         <!-- JS Imports -->
