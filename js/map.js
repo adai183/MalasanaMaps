@@ -246,6 +246,7 @@ var initMap = function() {
                 self.weatherButton("show weather");
                 // recenter map for better UX
                 map.setCenter(location.marker.getPosition());
+                map.panBy(0,-200);
 
                 // does the infowindow exist?
                 if (self.infowindow) {
