@@ -176,7 +176,7 @@ var ViewModel = function() {
     this.search = ko.observable('');
     self.showInstList = ko.observable(false);
     self.hideInstList = ko.observable(true);
-    var weather;
+    self.currentPhotoUrl = ko.observable('');
     self.weatherChecker = ko.observable(true);
     // create observables to controle weather animation
     self.sunny = ko.observable(false);
@@ -293,6 +293,7 @@ var ViewModel = function() {
                 // add photo url to infowindow
                 var item = data.response.photos.items[0];
                 place.photoUrl = item.prefix + "width300" + item.suffix;
+                self.currentPhotoUrl(place.photoUrl);
                 console.log(place.photoUrl);
                 $("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:150px; height: 150px;" src="' + place.photoUrl + '">');
             })
@@ -316,7 +317,7 @@ var ViewModel = function() {
             // recenter map for better UX
             map.setCenter(location.marker.getPosition());
             map.panBy(0,-200);
-
+            console.log(location);
             // does the infowindow exist?
             if (self.infowindow) {
                 self.infowindow.close(); // close the infowindow
@@ -513,7 +514,8 @@ ViewModel.prototype.updateContent = function(place) {
         place.name + '</h4>' +
         '<div id="bodyContent">' +
         '<p>' + place.description + '</p>' +
-        '<div id="photo-container"></div>' +
+        '<div id="photo-container">'+
+        self.currentPhotoUrl + '</div>' +
         '</div>' +
         '</div>';
 
