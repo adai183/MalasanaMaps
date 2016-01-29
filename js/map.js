@@ -531,5 +531,7 @@ var ViewModel = function() {
 
 // infowindow content
 ViewModel.prototype.updateContent = function(place) {
+    setTimeout(function() {
     infowindow.setContent($('.infowindow-template').html());
+    },800);
 };
