@@ -101,9 +101,8 @@ var instagramCall = function() {
         });
 }();
 
-
+// Google Maps API
 var initMap = function() {
-    // Google Maps
     var styleArray = [{
         "featureType": "landscape.fill",
         "elementType": "geometry.fill",
@@ -151,10 +150,11 @@ var initMap = function() {
             "color": "#7dcdcd"
         }]
     }];
-
+    // check if google is defined for error handling
     if ((typeof google !== 'undefined')) {
         // This next line makes `malasana` a new Google Map JavaScript Object
         var malasana = new google.maps.LatLng(40.426394, -3.704878);
+        // instantiate map object
         map = new google.maps.Map(document.getElementById('map'), {
             center: malasana,
             zoom: 16,
@@ -253,8 +253,8 @@ var ViewModel = function() {
 
     // Foursquare API
     self.foursquareCall = function(location) {
-
-        // load in foursquare api data into model
+    // load in foursquare api data into model
+        // get all data for neighborhood
         $.ajax({
                 dataType: 'json',
                 async: true,
@@ -265,7 +265,7 @@ var ViewModel = function() {
 
                 var venues = data.response.venues;
                 for (var i = 0; i < venues.length; i++) {
-                    // check wether if there is data on foursquare for this location
+                    // check wether there is data on foursquare for this location
                     if (location.name === venues[i].name) {
                         // get unique venue id
                         location.foursquareId = venues[i].id;
@@ -282,6 +282,7 @@ var ViewModel = function() {
 
     //SEPARATE FUNCTION TO GET PHOTOS FROM FOURSQUARE
     self.foursquarePhotos = function(place) {
+        // call foursquare again to get photos for specific venues
         $.ajax({
                 dataType: 'json',
                 async: true,
@@ -289,6 +290,7 @@ var ViewModel = function() {
                 url: 'https://api.foursquare.com/v2/venues/' + place.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
             })
             .done(function(data) {
+                // add photo url to infowindow
                 var item = data.response.photos.items[0];
                 place.photoUrl = item.prefix + "width300" + item.suffix;
                 console.log(place.photoUrl);
@@ -353,7 +355,7 @@ var ViewModel = function() {
    
     this.renderMarkers(self.placeList());
 
-    
+    // instantiate infowindow object
     this.infowindow = new google.maps.InfoWindow({
         maxWidth: 150
     });
@@ -361,7 +363,6 @@ var ViewModel = function() {
     // API calls
 
     // Logic to hide weather animation or show updated weather animation
-
     self.openweatherCall = function(lat, lng) {
         var url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
 
