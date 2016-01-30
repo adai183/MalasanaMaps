@@ -1,7 +1,21 @@
 #Project 5: Udacity
 ## Neighborhood Map
 
+
+
+### Installation
+
 Check out the [live link](http://adai183.github.io/MalasanaMaps).
+
+or
+
+
+1. Download the repo.
+
+2. The optimized content is in the dist directory. Just launch index.html. The source code is in the dev directory.
+
+3. Run the gulp build task to clean the dist directory and re-minify everything if you make changes to the dev code.
+
 
 ### Description
 > You will develop a single-page application featuring a map of your
@@ -13,8 +27,7 @@ Check out the [live link](http://adai183.github.io/MalasanaMaps).
 > provide additional information about each of these locations (such as
 > StreetView images, Wikipedia articles, Yelp reviews, etc).
 
-### Professor/TA Details
-None so far.
+
 
 ### Sources
 
