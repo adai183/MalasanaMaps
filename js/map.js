@@ -58,7 +58,7 @@ var Place = function(data) {
 
 
 // Call instagram api to load external data into place model
-// initialise map when finished on line 96
+// initialise map when finished on line 98
 var instagramCall = function() {
     $.ajax({
             type: 'GET',
@@ -68,7 +68,7 @@ var instagramCall = function() {
         })
         .done(function(data) {
             console.log("instagram ", data);
-            // add external data to place model
+            // add external data to place model by calling my instagram developers sandbox
             for (var i = 0; i < data.data.length; i++) {
                 var location = data.data[i].location;
                 var comment;
@@ -77,7 +77,7 @@ var instagramCall = function() {
                 } else {
                     comment = "";
                 }
-                console.log(location);
+                // create new location for every instagram venue
                 var instlocation = {
                     name: location.name,
                     lat: location.latitude,
@@ -88,6 +88,7 @@ var instagramCall = function() {
                     tag: "instagram",
                     visible: false
                 };
+                // push instagram location to model
                 place.push(instlocation);
             }
         })
@@ -103,7 +104,7 @@ var instagramCall = function() {
 
 
 var initMap = function() {
- // Google Maps
+    // Google Maps Api configuration
     var styleArray = [{
         "featureType": "landscape.fill",
         "elementType": "geometry.fill",
@@ -152,7 +153,7 @@ var initMap = function() {
         }]
     }];
 
-    if ((typeof google !== 'undefined')) {
+    if ((typeof google !== 'undefined')) { // handle errors for google api
         // This next line makes `malasana` a new Google Map JavaScript Object
         var malasana = new google.maps.LatLng(40.426394, -3.704878);
         // instantiate map object
@@ -165,7 +166,7 @@ var initMap = function() {
             streetViewControl: false
         });
         infowindow = new google.maps.InfoWindow({
-        maxWidth: 150
+            maxWidth: 150
         });
     } else {
         alert('Google Maps Error');
@@ -258,6 +259,7 @@ var ViewModel = function() {
     self.foursquareCall = function(location) {
 
         // load in foursquare api data into model
+        // call the api with my neighborhood's coordinates as parameters 
         $.ajax({
                 dataType: 'json',
                 async: true,
@@ -265,14 +267,16 @@ var ViewModel = function() {
                 url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
             })
             .done(function(data) {
-
                 var venues = data.response.venues;
+                // iterate through all venues from the foursquare response
                 for (var i = 0; i < venues.length; i++) {
-                    // check wether if there is data on foursquare for this location
+                    // check if there is data on foursquare for this location
                     if (location.name === venues[i].name) {
                         // get unique venue id
                         location.foursquareId = venues[i].id;
-                        self.foursquarePhotos(location); //GET PHOTOS HERE -- ONLY IF HAVE ID
+                        // GET PHOTOS HERE -- ONLY IF HAVE ID
+                        // see self.foursquarePhotos at line 291
+                        self.foursquarePhotos(location);
                     }
                 }
             })
@@ -285,6 +289,7 @@ var ViewModel = function() {
 
     //SEPARATE FUNCTION TO GET PHOTOS FROM FOURSQUARE
     self.foursquarePhotos = function(place) {
+        // call foursquare again with venue-specific idea to get url for the first photo on foursquare
         $.ajax({
                 dataType: 'json',
                 async: true,
@@ -292,19 +297,18 @@ var ViewModel = function() {
                 url: 'https://api.foursquare.com/v2/venues/' + place.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
             })
             .done(function(data) {
+                // get first photo
                 var item = data.response.photos.items[0];
-                place.photoUrl =item.prefix + "width300" + item.suffix;
-                // see data-binding for img in phot-container in index.html
+                place.photoUrl = item.prefix + "width300" + item.suffix;
+                // see data-binding for img in photo-container in index.html
                 self.currentPlacePhotoUrl(place.photoUrl);
-                console.log("from fousquare call: ",place.photoUrl);
-                //$("#photo-container").append('<img class="foursquarePhoto img-responsive" style="width:150px; height: 150px;" src="' + place.photoUrl + '">');
             })
             .fail(function() {
                 alert("Sorry. Failed to load photos from foursquare api");
             });
     };
 
-    
+
     this.createEventListener = function(location) {
         location.marker.addListener('click', function() {
             // hide image first to make sure the previous image is not shown while the new one loads in from foursquare
@@ -314,13 +318,13 @@ var ViewModel = function() {
             self.currentPlace(location);
             self.currentPlaceName(location.name);
             self.currentPlaceDescription(location.description);
-            if (location.tag === "instagram"){ 
+            if (location.tag === "instagram") {
                 self.currentPlacePhotoUrl(location.photoUrl);
-            // handle click event if location is hardcoded    
-            }else if (location.tag === "hardcoded") {
-                self.foursquareCall(location);    
+                // handle click event if location is hardcoded    
+            } else if (location.tag === "hardcoded") {
+                self.foursquareCall(location);
             }
-            
+
             //console.log("photoUrl: ", location.photoUrl);
             // hide sidebar and weather animation when place gets clicked for better UX
             hideNavbar();
@@ -328,7 +332,7 @@ var ViewModel = function() {
             self.weatherButton("show weather");
             // recenter map for better UX
             map.setCenter(location.marker.getPosition());
-            map.panBy(0,-200);
+            map.panBy(0, -200);
 
             // does the infowindow exist?
             if (infowindow) {
@@ -365,7 +369,7 @@ var ViewModel = function() {
         }
 
     });
-   
+
     this.renderMarkers(self.placeList());
     /*
     this.infowindow = new google.maps.InfoWindow({
@@ -466,9 +470,9 @@ var ViewModel = function() {
         }, 250);
     });
 
-    
-                /// UI ///
-    
+
+    /// UI ///
+
     var hideNavbar = function() {
         self.wrapperClass('toggled');
         self.menuClass('');
@@ -537,6 +541,7 @@ var ViewModel = function() {
 // infowindow content
 ViewModel.prototype.updateContent = function(place) {
     setTimeout(function() {
-    infowindow.setContent($('.infowindow-template').html());
-    },800);
+        // get template from index html line 84
+        infowindow.setContent($('.infowindow-template').html());
+    }, 800);
 };
