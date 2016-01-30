@@ -182,8 +182,12 @@ var ViewModel = function() {
     self.currentPlaceName = ko.observable('');
     self.currentPlaceDescription = ko.observable('');
     self.currentPlacePhotoUrl = ko.observable('');
+    self.menuClass = ko.observable('active');
+    self.wrapperClass = ko.observable('');
+    self.postButton = ko.observable('show posts');
     var weather;
     self.weatherChecker = ko.observable(true);
+    self.menuChecker = ko.observable(true);
     // create observables to controle weather animation
     self.sunny = ko.observable(false);
     self.cloudy = ko.observable(false);
@@ -206,13 +210,6 @@ var ViewModel = function() {
     // set first place
     this.currentPlace = ko.observable(this.placeList()[0]);
 
-    var hideNavbar = function() {
-
-        $("#wrapper").attr("class", "toggled");
-        $("#menu-toggle").attr("class", "");
-    };
-
-    // list click
     this.setPlace = function(clickedPlace) {
         google.maps.event.trigger(clickedPlace.marker, 'click');
         // hide sidebar and weather animation when place gets clicked for better UX
@@ -386,7 +383,6 @@ var ViewModel = function() {
         $.getJSON(url, function(data) {
             var weather = data.weather[0].description;
             console.log("weather: ", weather);
-            $(".weather-container").show();
             self.sunny(false);
             self.cloudy(false);
             self.rainy(false);
@@ -470,16 +466,34 @@ var ViewModel = function() {
         }, 250);
     });
 
+    
+                /// UI ///
+    
+    var hideNavbar = function() {
+        self.wrapperClass('toggled');
+        self.menuClass('');
+        self.menuChecker(!self.menuChecker());
+    };
+
+    // Toggle functionality side navigation menu
+    self.toggleMenu = function() {
+        if (self.menuChecker()) {
+            hideNavbar();
+
+        } else {
+            self.wrapperClass('');
+            self.menuClass('active');
+            self.menuChecker(!self.menuChecker());
+        }
+    };
+
     // Toggle functionality for weather button
     self.toggleWeather = function() {
         self.weatherChecker(!self.weatherChecker());
-        //console.log(self.weatherChecker());
-
         if (self.weatherChecker()) {
             self.weatherButton("hide weather");
             // close sidebar for better UX
-            $("#wrapper").toggleClass("toggled");
-            $("#menu-toggle").toggleClass("active");
+            hideNavbar();
         } else {
             self.weatherButton("show weather");
         }
@@ -498,7 +512,7 @@ var ViewModel = function() {
                 self.placeList()[i].marker.setVisible(true);
             }
             instPostChecker = false;
-            $("#post-button").text("hide posts");
+            self.postButton("hide posts");
         } else {
             // handle visibilty of instagram posts in sidebar list
             self.hideInstList(true);
@@ -511,7 +525,7 @@ var ViewModel = function() {
                 }
             }
             instPostChecker = true;
-            $("#post-button").text("show posts");
+            self.postButton("show posts");
         }
     };
 

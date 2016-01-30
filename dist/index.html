@@ -20,7 +20,7 @@
         <![endif]--> 
 
             
-        <div id="wrapper">
+        <div id="wrapper" data-bind="attr: { class: wrapperClass}">
              <!-- Sidebar -->   
             <div id="sidebar-wrapper">
              <!-- Searchbar -->     
@@ -31,9 +31,9 @@
                  </form>
                  <!-- Buttons -->
                 <div id="buttons">
-                    <button id="post-button" class="btn btn-success" data-bind="click: $root.toggleInstPosts">
-                        show posts
+                    <button id="post-button" class="btn btn-success" data-bind="click: $root.toggleInstPosts, text: postButton">
                     </button>
+                    
                     <button id="weather-button" class="btn btn-primary" data-bind="click: $root.toggleWeather, text: weatherButton">     
                     </button>
                 </div>
@@ -57,7 +57,7 @@
             <div id="map-container" >
                 
             <!-- Weather Animation -->
-            <div class= "weather-container" style="display:none;">
+            <div class= "weather-container">
                 <!-- ko if: sunny() && weatherChecker()-->
                 <div class="sunny weather"></div> 
                 <!-- /ko -->
@@ -78,7 +78,7 @@
             
                 <div id="map"></div>
             </div>      
-                <a href="#menu-toggle" id="menu-toggle" class="active" ><span></span></a> 
+                <a href="#menu-toggle" data-bind="attr: { class: menuClass}, click: toggleMenu" id="menu-toggle"><span></span></a> 
         </div> 
 
         <!--info wondow template-->
@@ -103,10 +103,7 @@
         <script src="https://maps.googleapis.com/maps/api/js?libraries=places" async defer></script>
         
         <script src="js/map.js"></script>
-        <!--script src="js/app.js"></script-->
-        <script src="js/ui.js"></script>
         
-               
         <!-- Google Analytics-->
         <script>
         
