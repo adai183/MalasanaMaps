@@ -307,20 +307,10 @@ var ViewModel = function() {
             });
     };
 
-    /* 
-    Workaround to handle unexpected bahaviour of data-bindings inside infowindows.
-    Seems I have to activate all bindings "silently" to make them work. If 
-    */
-    /*
-    self.foursquareCall(this.placeList()[0]);
-    self.currentPlaceName(this.placeList()[0].name);
-    self.currentPlaceDescription(this.placeList()[0].description);
-    */
-
-
+    
     this.createEventListener = function(location) {
         location.marker.addListener('click', function() {
-            console.log(location.tag);
+            // hide image first to make sure the previous image is not shown while the new one loads in from foursquare
             // handle click event if location is coming from instagram
             self.updateContent(location);
             toggleBounce(location.marker);
@@ -329,6 +319,7 @@ var ViewModel = function() {
             self.currentPlaceDescription(location.description);
             if (location.tag === "instagram"){ 
                 self.currentPlacePhotoUrl(location.photoUrl);
+            // handle click event if location is hardcoded    
             }else if (location.tag === "hardcoded") {
                 self.foursquareCall(location);    
             }
