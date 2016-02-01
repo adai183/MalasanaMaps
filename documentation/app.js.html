@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: app.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: app.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * Knockout.js viewmodel
  */
 var ViewModel = function() {
@@ -46,7 +74,7 @@ var ViewModel = function() {
 
     this.renderMarkers = function(arrayInput) {
         // use place array to create marker array
-        for (var i = 0, len = arrayInput.length; i < len; i++) {
+        for (var i = 0, len = arrayInput.length; i &lt; len; i++) {
             var location = {
                 lat: arrayInput[i].lat,
                 lng: arrayInput[i].lng
@@ -89,12 +117,12 @@ var ViewModel = function() {
                 dataType: 'json',
                 async: true,
                 data: true,
-                url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + self.lat + ',%20' + self.lng + '%20',
+                url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&amp;client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&amp;v=20130815%20&amp;ll=' + self.lat + ',%20' + self.lng + '%20',
             })
             .done(function(data) {
                 var venues = data.response.venues;
                 // iterate through all venues from the foursquare response
-                for (var i = 0; i < venues.length; i++) {
+                for (var i = 0; i &lt; venues.length; i++) {
                     // check if there is data on foursquare for this location
                     if (self.name === venues[i].name) {
                         // get unique venue id
@@ -120,7 +148,7 @@ var ViewModel = function() {
                 dataType: 'json',
                 async: true,
                 data: true,
-                url: 'https://api.foursquare.com/v2/venues/' + that.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
+                url: 'https://api.foursquare.com/v2/venues/' + that.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&amp;client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&amp;v=20130815%20',
             })
             .done(function(data) {
                 // get first photo
@@ -155,7 +183,7 @@ var ViewModel = function() {
 
 
             // close sidebar for better UX on medium and small devices
-            if (window.innerWidth < 1000) {
+            if (window.innerWidth &lt; 1000) {
                 hideNavbar();
             }
             // hide weather when location is clicked for better UX
@@ -179,7 +207,7 @@ var ViewModel = function() {
         // is the search term undefined or empty?
         if (!searchTerm || searchTerm === '') {
             // for each location
-            for (var i = 0; i < self.placeList().length; i++) {
+            for (var i = 0; i &lt; self.placeList().length; i++) {
                 // does the map marker exist?
                 if (self.placeList()[i].marker !== undefined) {
                     self.placeList()[i].marker.setVisible(true); // show the map marker
@@ -191,7 +219,7 @@ var ViewModel = function() {
             return ko.utils.arrayFilter(self.placeList(),
                 function(item) {
                     // does the place name contain the search term?
-                    if (item.name.toLowerCase().indexOf(searchTerm) < 0) {
+                    if (item.name.toLowerCase().indexOf(searchTerm) &lt; 0) {
                         item.marker.setVisible(false); // hide the map marker
                     } else {
                         if (item.tag === "instagram") {
@@ -218,7 +246,7 @@ var ViewModel = function() {
     // Logic to hide weather animation or show updated weather animation
 
     self.openweatherCall = function(lat, lng) {
-        var url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
+        var url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&amp;lon=" + lng + "&amp;units=metric&amp;appid=186b68b9f2c87ea71239b8d2dac0b380";
 
         // call openweather api
         $.getJSON(url, function(data) {
@@ -334,7 +362,7 @@ var ViewModel = function() {
         if (self.weatherChecker()) {
             self.weatherButton("hide weather");
             // close sidebar for better UX on medium and small devices
-            if (window.innerWidth < 1000) {
+            if (window.innerWidth &lt; 1000) {
                 hideNavbar();
             }
         } else {
@@ -351,7 +379,7 @@ var ViewModel = function() {
             self.showInstList(true);
 
             // handle visibilty of each instagram post's marker on map
-            for (var i = 0; i < self.placeList().length; i++) {
+            for (var i = 0; i &lt; self.placeList().length; i++) {
                 self.placeList()[i].marker.setVisible(true);
             }
             instPostChecker = false;
@@ -362,7 +390,7 @@ var ViewModel = function() {
             self.showInstList(false);
 
             // handle visibilty of each instagram post's marker on map
-            for (var i = 0; i < self.placeList().length; i++) {
+            for (var i = 0; i &lt; self.placeList().length; i++) {
                 if (self.placeList()[i].tag === "instagram") {
                     self.placeList()[i].marker.setVisible(false);
                 }
@@ -382,4 +410,26 @@ ViewModel.prototype.updateContent = function(place) {
         // get template from index html line 84
         infowindow.setContent($('.infowindow-template').html());
     }, 800);
-};
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Place.html">Place</a></li></ul><h3>Global</h3><ul><li><a href="global.html#googleError">googleError</a></li><li><a href="global.html#infowindow">infowindow</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#instagramCall">instagramCall</a></li><li><a href="global.html#map">map</a></li><li><a href="global.html#place">place</a></li><li><a href="global.html#ViewModel">ViewModel</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 01 2016 19:23:12 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
