@@ -4,9 +4,9 @@
  */
 var ViewModel = function() {
     var self = this;
-    this.placeList = ko.observableArray([]);
-    this.igImages = ko.observableArray([]);
-    this.search = ko.observable('');
+    self.placeList = ko.observableArray([]);
+    self.igImages = ko.observableArray([]);
+    self.search = ko.observable('');
     self.showInstList = ko.observable(false);
     self.hideInstList = ko.observable(true);
     self.currentPlaceName = ko.observable('');
@@ -31,7 +31,7 @@ var ViewModel = function() {
 
     // Create place object. Push to array.
     place.forEach(function(item) {
-        this.placeList.push(new Place(item));
+        self.placeList.push(new Place(item));
     }, this);
 
 
@@ -82,27 +82,27 @@ var ViewModel = function() {
     }
 
     // Foursquare API
-    self.foursquareCall = function(location) {
-
+    Place.prototype.foursquareCall = function() {
+        var self = this;
         // load in foursquare api data into model
         // call the api with my neighborhood's coordinates as parameters 
         $.ajax({
                 dataType: 'json',
                 async: true,
                 data: true,
-                url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + location.lat + ',%20' + location.lng + '%20',
+                url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + self.lat + ',%20' + self.lng + '%20',
             })
             .done(function(data) {
                 var venues = data.response.venues;
                 // iterate through all venues from the foursquare response
                 for (var i = 0; i < venues.length; i++) {
                     // check if there is data on foursquare for this location
-                    if (location.name === venues[i].name) {
+                    if (self.name === venues[i].name) {
                         // get unique venue id
-                        location.foursquareId = venues[i].id;
+                        self.foursquareId = venues[i].id;
                         // GET PHOTOS HERE -- ONLY IF HAVE ID
-                        // see self.foursquarePhotos at line 291
-                        self.foursquarePhotos(location);
+                        // see line 117
+                        self.foursquarePhotos();
                     }
                 }
             })
@@ -114,20 +114,21 @@ var ViewModel = function() {
 
 
     //SEPARATE FUNCTION TO GET PHOTOS FROM FOURSQUARE
-    self.foursquarePhotos = function(place) {
+    Place.prototype.foursquarePhotos = function() {
+        var that = this;
         // call foursquare again with venue-specific idea to get url for the first photo on foursquare
         $.ajax({
                 dataType: 'json',
                 async: true,
                 data: true,
-                url: 'https://api.foursquare.com/v2/venues/' + place.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
+                url: 'https://api.foursquare.com/v2/venues/' + that.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
             })
             .done(function(data) {
                 // get first photo
                 var item = data.response.photos.items[0];
-                place.photoUrl = item.prefix + "width300" + item.suffix;
+                that.photoUrl = item.prefix + "width300" + item.suffix;
                 // see data-binding for img in photo-container in index.html
-                self.currentPlacePhotoUrl(place.photoUrl);
+                self.currentPlacePhotoUrl(that.photoUrl);
             })
             .fail(function() {
                 alert("Sorry. Failed to load photos from foursquare api");
@@ -150,7 +151,7 @@ var ViewModel = function() {
                 self.currentPlacePhotoUrl(location.photoUrl);
             // handle click event if location is hardcoded and get photo url from foursquare    
             } else if (location.tag === "hardcoded") {
-                self.foursquareCall(location);
+                location.foursquareCall();
             }
 
             
