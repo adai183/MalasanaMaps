@@ -17,6 +17,7 @@ var ViewModel = function() {
     var weather;
     self.weatherChecker = ko.observable(true);
     self.menuChecker = ko.observable(true);
+    self.showInfoWindow =  ko.observable(false);
     // create observables to controle weather animation
     self.sunny = ko.observable(false);
     self.cloudy = ko.observable(false);
@@ -139,6 +140,10 @@ var ViewModel = function() {
         location.marker.addListener('click', function() {
             // hide image first to make sure the previous image is not shown while the new one loads in from foursquare
             // handle click event if location is coming from instagram
+            setTimeout(function() {
+                self.showInfoWindow(true);
+            }, 800);
+            
             self.updateContent(location);
             toggleBounce(location.marker);
             self.currentPlace(location);
@@ -168,6 +173,7 @@ var ViewModel = function() {
             // does the infowindow exist?
             if (infowindow) {
                 infowindow.close(); // close the infowindow
+                self.showInfoWindow(false);
             }
             // open the infowindow with this map marker location
             infowindow.open(map, location.marker);
