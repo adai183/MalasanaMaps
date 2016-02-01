@@ -1,5 +1,6 @@
+
 /**
- * Knockout.js Viewmodel
+ * Knockout.js viewmodel
  */
 var ViewModel = function() {
     var self = this;

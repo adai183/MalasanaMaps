@@ -97,8 +97,7 @@ var instagramCall = function() {
             alert("Sorry, failed to load data from instagram api");
         })
         .always(function() {
-            // initialize app
-            initMap();
+            // instantiate Viewmodel when instagram data is loaded
             ko.applyBindings(new ViewModel());
         });
 }();
@@ -186,3 +185,10 @@ var initMap = function() {
         alert('Google Maps Error');
     }
 };
+
+/** 
+* on error function to be excuted when google api fails
+*/
+function googleError() {
+  alert('Google Maps Error');
+}
