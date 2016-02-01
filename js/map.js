@@ -213,12 +213,11 @@ var ViewModel = function() {
 
     this.setPlace = function(clickedPlace) {
         google.maps.event.trigger(clickedPlace.marker, 'click');
-        // hide sidebar and weather animation when place gets clicked for better UX
-        hideNavbar();
+        // hide weather animation when place gets clicked for better UX on medium and small devices
         self.weatherChecker(false);
         self.weatherButton("show weather");
-
     };
+    
     this.renderMarkers = function(arrayInput) {
         // use place array to create marker array
         for (var i = 0, len = arrayInput.length; i < len; i++) {
@@ -318,16 +317,21 @@ var ViewModel = function() {
             self.currentPlace(location);
             self.currentPlaceName(location.name);
             self.currentPlaceDescription(location.description);
+            
+            // handle click event if location coming from instagram and use pre-loaded instagram photo url    
             if (location.tag === "instagram") {
                 self.currentPlacePhotoUrl(location.photoUrl);
-                // handle click event if location is hardcoded    
+            // handle click event if location is hardcoded and get photo url from foursquare    
             } else if (location.tag === "hardcoded") {
                 self.foursquareCall(location);
             }
 
-            //console.log("photoUrl: ", location.photoUrl);
-            // hide sidebar and weather animation when place gets clicked for better UX
+            
+            // close sidebar for better UX on medium and small devices
+            if(window.innerWidth < 1000) {
             hideNavbar();
+            }
+            // hide weather when location is clicked for better UX
             self.weatherChecker(false);
             self.weatherButton("show weather");
             // recenter map for better UX
@@ -502,8 +506,10 @@ var ViewModel = function() {
         self.weatherChecker(!self.weatherChecker());
         if (self.weatherChecker()) {
             self.weatherButton("hide weather");
-            // close sidebar for better UX
+            // close sidebar for better UX on medium and small devices
+            if(window.innerWidth < 1000) {
             hideNavbar();
+            }
         } else {
             self.weatherButton("show weather");
         }
@@ -540,7 +546,6 @@ var ViewModel = function() {
     };
 
 };
-
 
 
 
