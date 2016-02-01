@@ -352,6 +352,7 @@ var ViewModel = function() {
                 // does the map marker exist?
                 if (self.placeList()[i].marker !== undefined) {
                     self.placeList()[i].marker.setVisible(true); // show the map marker
+                    console.log(self.placeList()[i]);
                 }
             }
             return self.placeList(); // return location list
@@ -362,6 +363,15 @@ var ViewModel = function() {
                     if (item.name.toLowerCase().indexOf(searchTerm) < 0) {
                         item.marker.setVisible(false); // hide the map marker
                     } else {
+                        if (item.tag === "instagram"){
+                            // check wether instagram posts are visible see line 512
+                            if (!instPostChecker){
+                                // handle visibilty of instagram posts in sidebar list
+                                self.hideInstList(false);
+                                self.showInstList(true);
+                                item.marker.setVisible(true); // show the map marker
+                            }
+                        } else if(item.tag === "hardcoded")
                         item.marker.setVisible(true); // show the map marker
                     }
                     return item.name.toLowerCase().indexOf(searchTerm) !== -1; // return filtered location list
@@ -371,10 +381,6 @@ var ViewModel = function() {
     });
 
     this.renderMarkers(self.placeList());
-    /*
-    this.infowindow = new google.maps.InfoWindow({
-        maxWidth: 150
-    });*/
 
     // API calls
 
