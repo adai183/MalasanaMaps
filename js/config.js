@@ -72,11 +72,12 @@ var instagramCall = function() {
         .done(function(data) {
             // add external data to place model by calling my instagram developers sandbox
             for (var i = 0; i < data.data.length; i++) {
+              if (data.data[i].location !== null){
                 var location = data.data[i].location;
                 var comment = data.data[i].caption ? data.data[i].caption.text : "";
-
-                /** 
-                create new location for every instagram venue 
+                console.log(data);
+                /**
+                create new location for every instagram venue
                 * @memberof instagramCall
                 */
                 var instlocation = {
@@ -92,6 +93,7 @@ var instagramCall = function() {
                 // push instagram location to model
                 place.push(instlocation);
             }
+          }
         })
         .fail(function() {
             alert("Sorry, failed to load data from instagram api");
@@ -106,7 +108,7 @@ var instagramCall = function() {
  * Configure and instantiate Google map
  */
 var initMap = function() {
-    /** 
+    /**
      * set styles for map
      * @memberof initMap
      * @type {object}
@@ -164,7 +166,7 @@ var initMap = function() {
         var malasana = new google.maps.LatLng(40.426394, -3.704878);
 
         /** @global
-         * 
+         *
          */
         map = new google.maps.Map(document.getElementById('map'), {
             center: malasana,
@@ -175,8 +177,8 @@ var initMap = function() {
             streetViewControl: false
         });
 
-        /** 
-        @global 
+        /**
+        @global
         */
         infowindow = new google.maps.InfoWindow({
             maxWidth: 150
@@ -186,7 +188,7 @@ var initMap = function() {
     }
 };
 
-/** 
+/**
  * on error function to be excuted when google api fails
  */
 function googleError() {
