@@ -85,7 +85,7 @@ var ViewModel = function() {
     Place.prototype.foursquareCall = function() {
         var self = this;
         // load in foursquare api data into model
-        // call the api with my neighborhood's coordinates as parameters 
+        // call the api with my neighborhood's coordinates as parameters
         $.ajax({
                 dataType: 'json',
                 async: true,
@@ -143,17 +143,17 @@ var ViewModel = function() {
             setTimeout(function() {
                 self.showInfoWindow(true);
             }, 800);
-            
+
             self.updateContent(location);
             toggleBounce(location.marker);
             self.currentPlace(location);
             self.currentPlaceName(location.name);
             self.currentPlaceDescription(location.description);
 
-            // handle click event if location coming from instagram and use pre-loaded instagram photo url    
+            // handle click event if location coming from instagram and use pre-loaded instagram photo url
             if (location.tag === "instagram") {
                 self.currentPlacePhotoUrl(location.photoUrl);
-                // handle click event if location is hardcoded and get photo url from foursquare    
+                // handle click event if location is hardcoded and get photo url from foursquare
             } else if (location.tag === "hardcoded") {
                 location.foursquareCall();
             }
@@ -237,6 +237,9 @@ var ViewModel = function() {
             self.stormy(false);
             // set weather animation on map
             switch (weather) {
+                case "clear sky":
+                    self.sunny(true);
+                    break;
                 case "Sky is Clear":
                     self.sunny(true);
                     break;
@@ -298,7 +301,7 @@ var ViewModel = function() {
         });
     };
 
-    // inicial call to openweather api and set weather animation on map 
+    // inicial call to openweather api and set weather animation on map
     self.openweatherCall(40.426394, -3.704878);
 
     // update weather when the user changes map center
