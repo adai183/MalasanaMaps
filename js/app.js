@@ -40,9 +40,6 @@ var ViewModel = function() {
 
     this.setPlace = function(clickedPlace) {
         google.maps.event.trigger(clickedPlace.marker, 'click');
-        // hide weather animation when place gets clicked for better UX on medium and small devices
-        self.weatherChecker(false);
-        self.weatherButton("show weather");
     };
 
     this.renderMarkers = function(arrayInput) {
@@ -56,7 +53,7 @@ var ViewModel = function() {
             var marker = new google.maps.Marker({
                 position: location,
                 map: map,
-                icon: arrayInput[i].icon,
+                
                 animation: google.maps.Animation.DROP,
                 myPlace: arrayInput[i]
             });
@@ -81,68 +78,17 @@ var ViewModel = function() {
         }, 2500);
     }
 
-    // Foursquare API
-    Place.prototype.foursquareCall = function() {
-        var self = this;
-        // load in foursquare api data into model
-        // call the api with my neighborhood's coordinates as parameters
-        $.ajax({
-                dataType: 'json',
-                async: true,
-                data: true,
-                url: 'https://api.foursquare.com/v2/venues/search?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20&ll=' + self.lat + ',%20' + self.lng + '%20',
-            })
-            .done(function(data) {
-                var venues = data.response.venues;
-                // iterate through all venues from the foursquare response
-                for (var i = 0; i < venues.length; i++) {
-                    // check if there is data on foursquare for this location
-                    if (self.name === venues[i].name) {
-                        // get unique venue id
-                        self.foursquareId = venues[i].id;
-                        // GET PHOTOS HERE -- ONLY IF HAVE ID
-                        // see line 117
-                        self.foursquarePhotos();
-                    }
-                }
-            })
-            .fail(function() {
-                alert("Sorry. Failed to load data from foursquare api");
-            });
-    };
 
 
-
-    //SEPARATE FUNCTION TO GET PHOTOS FROM FOURSQUARE
-    Place.prototype.foursquarePhotos = function() {
-        var that = this;
-        // call foursquare again with venue-specific idea to get url for the first photo on foursquare
-        $.ajax({
-                dataType: 'json',
-                async: true,
-                data: true,
-                url: 'https://api.foursquare.com/v2/venues/' + that.foursquareId + '/photos?client_id=OLSA1F5F10UDHTESHULYSQGJ23SI0IWQOVF4IP5GUI5Z2AMK%20&client_secret=WJWCDE3DQNUPSNQ0DN5TF3LFRCERFPRDCZAEGVRIXGEFTZAU%20&v=20130815%20',
-            })
-            .done(function(data) {
-                // get first photo
-                var item = data.response.photos.items[0];
-                that.photoUrl = item.prefix + "width300" + item.suffix;
-                // see data-binding for img in photo-container in index.html
-                self.currentPlacePhotoUrl(that.photoUrl);
-            })
-            .fail(function() {
-                alert("Sorry. Failed to load photos from foursquare api");
-            });
-    };
 
 
     this.createEventListener = function(location) {
         location.marker.addListener('click', function() {
             // hide image first to make sure the previous image is not shown while the new one loads in from foursquare
             // handle click event if location is coming from instagram
-            setTimeout(function() {
-                self.showInfoWindow(true);
-            }, 800);
+
+              self.showInfoWindow(true);
+
 
             self.updateContent(location);
             toggleBounce(location.marker);
@@ -154,10 +100,7 @@ var ViewModel = function() {
             if (location.tag === "instagram") {
                 self.currentPlacePhotoUrl(location.photoUrl);
                 // handle click event if location is hardcoded and get photo url from foursquare
-            } else if (location.tag === "hardcoded") {
-                location.foursquareCall();
             }
-
 
             // close sidebar for better UX on medium and small devices
             if (window.innerWidth < 1000) {
@@ -221,100 +164,7 @@ var ViewModel = function() {
 
     // API calls
 
-    // Logic to hide weather animation or show updated weather animation
 
-    self.openweatherCall = function(lat, lng) {
-        var url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&units=metric&appid=186b68b9f2c87ea71239b8d2dac0b380";
-
-        // call openweather api
-        $.getJSON(url, function(data) {
-            var weather = data.weather[0].description;
-            console.log("weather: ", weather);
-            self.sunny(false);
-            self.cloudy(false);
-            self.rainy(false);
-            self.snowy(false);
-            self.stormy(false);
-            // set weather animation on map
-            switch (weather) {
-                case "clear sky":
-                    self.sunny(true);
-                    break;
-                case "Sky is Clear":
-                    self.sunny(true);
-                    break;
-                case "few clouds":
-                    self.sunny(true);
-                    self.cloudy(true);
-                    break;
-                case "scattered clouds":
-                    self.sunny(true);
-                    self.cloudy(true);
-                    break;
-                case "broken clouds":
-                    self.sunny(true);
-                    self.cloudy(true);
-                    break;
-                case "overcast clouds":
-                    self.cloudy(true);
-                    break;
-                case "fog":
-                    self.cloudy(true);
-                    break;
-                case "light intensity drizzle":
-                    self.cloudy(true);
-                    break;
-                case "drizzle":
-                    self.cloudy(true);
-                    break;
-                case "light intensity drizzle":
-                    self.cloudy(true);
-                    break;
-                case "light rain":
-                    self.rainy(true);
-                    break;
-                case "moderate rain":
-                    self.rainy(true);
-                    break;
-                case "rain":
-                    self.cloudy(true);
-                    self.rainy(true);
-                    break;
-                case "Thunderstorm":
-                    self.cloudy(true);
-                    self.rainy(true);
-                    self.stormy(true);
-                    break;
-                case "snow":
-                    self.cloudy(true);
-                    self.snowy(true);
-                    break;
-                case "mist":
-                    self.cloudy(true);
-                    break;
-                default:
-                    console.log("Sorry, " + weather + " does not match any coded weather description.");
-            }
-
-        }).fail(function() {
-            alert('Weather API Error');
-        });
-    };
-
-    // inicial call to openweather api and set weather animation on map
-    self.openweatherCall(40.426394, -3.704878);
-
-    // update weather when the user changes map center
-    map.addListener('center_changed', function() {
-        var lat,
-            lng;
-        // use setTimeout to avoid unnecessary api calls
-        setTimeout(function() {
-            lat = map.getCenter().lat();
-            lng = map.getCenter().lng();
-            self.openweatherCall(lat, lng);
-        }, 250);
-    });
 
 
     /// UI ///

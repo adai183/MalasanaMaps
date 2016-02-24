@@ -17,27 +17,20 @@
     <body>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]--> 
+        <![endif]-->
 
-            
+
         <div id="wrapper" data-bind="attr: { class: wrapperClass}">
-             <!-- Sidebar -->   
+             <!-- Sidebar -->
             <div id="sidebar-wrapper">
-             <!-- Searchbar -->     
+             <!-- Searchbar -->
                 <form id="search-bar" class="navbar-form navbar-center">
                     <div class="form-group">
                         <input type="text" class="form-control" data-bind="value: search, valueUpdate: 'afterkeydown'" placeholder="Search">
                     </div>
                  </form>
-                 <!-- Buttons -->
-                <div id="buttons">
-                    <button id="post-button" class="btn btn-success" data-bind="click: $root.toggleInstPosts, text: postButton">
-                    </button>
-                    
-                    <button id="weather-button" class="btn btn-primary" data-bind="click: $root.toggleWeather, text: weatherButton">     
-                    </button>
-                </div>
-                <!--Elements-->   
+                 
+                <!--Elements-->
                 <ul class="sidebar-nav">
                     <li>
                         <h3>Locations:</h3>
@@ -55,11 +48,11 @@
 
             <!-- Map -->
             <div id="map-container" >
-                
+
             <!-- Weather Animation -->
-            <div class= "weather-container">
+            <div class= "weather-container" hidden="true">
                 <!-- ko if: sunny() && weatherChecker()-->
-                <div class="sunny weather"></div> 
+                <div class="sunny weather"></div>
                 <!-- /ko -->
                 <!-- ko if: cloudy() && weatherChecker()-->
                 <div class="cloudy weather"></div>
@@ -74,12 +67,12 @@
                 <div class="stormy weather"></div>
                 <!-- /ko -->
             </div>
-                
-            
+
+
                 <div id="map"></div>
-            </div>      
-                <a href="#menu-toggle" data-bind="attr: { class: menuClass}, click: toggleMenu" id="menu-toggle"><span></span></a> 
-        </div> 
+            </div>
+                <a href="#menu-toggle" data-bind="attr: { class: menuClass}, click: toggleMenu" id="menu-toggle"><span></span></a>
+        </div>
 
         <!--info wondow template-->
         <div id="content" class="infowindow-template">
@@ -88,33 +81,30 @@
             <h4 id="firstHeading" class="firstHeading" data-bind="text: currentPlaceName"></h4>
             <div id="bodyContent">
                 <p data-bind="text: currentPlaceDescription"></p>
-                <div id="photo-container">
-                    <img class="img-responsive" data-bind="attr:{src: currentPlacePhotoUrl}, visible: showInfoWindow "style="width:150px; height: 150px;">
-                </div>
-            </div> 
+            </div>
         </div>
         <!-- End content -->
-        
+
         <!-- JS Imports -->
         <script src="js/vendor/jquery-1.11.2.min.js"></script>
         <script src="js/vendor/bootstrap.min.js"></script>
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <script src="js/vendor/knockout-3.2.0.js"></script>        
+        <script src="js/vendor/knockout-3.2.0.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap" onerror="googleError()" async defer></script>
-        
+
         <script src="js/config.js"></script>
         <script src="js/app.js"></script>
-        
+
         <!-- Google Analytics-->
         <script>
-        
+
             (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
             function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
             e=o.createElement(i);r=o.getElementsByTagName(i)[0];
             e.src='//www.google-analytics.com/analytics.js';
             r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
             ga('create','UA-72951135-1','auto');ga('send','pageview');
-        
+
         </script>
     </body>
 </html>
